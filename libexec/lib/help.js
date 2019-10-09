@@ -108,9 +108,8 @@ const helpModule = {
 		output += "SOAJS Installer Versions:\n";
 		
 		output += "   Installer package [" + packagejson.version + "]\n";
-		output += "   Installer local [" + local_packagejson.version + "]\n";
-		output += "   Installer remote [" + remote_packagejson.version + "]\n";
-		output += "\n";
+		output += "   Installer local   [" + local_packagejson.version + "]\n";
+		output += "   Installer remote  [" + remote_packagejson.version + "]\n";
 		
 		//print and return
 		console.log(output);
