@@ -6,7 +6,7 @@ const soajs = require('soajs');
 
 module.exports = {
 	"getLogger": () => {
-		return soajs.core.getLogger("SOAJS Installer", {"formatter": {"levelInString": true, "outputMode": 'short'}});
+		return soajs.core.getLogger("SOAJS Installer", {"formatter": {"levelInString": true, "outputMode": 'short'}, "level": "debug"});
 		/*
 		//set the logger
 		let formatOut = bunyanFormat({"levelInString": true, "outputMode": 'short'});
