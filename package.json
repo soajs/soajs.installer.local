@@ -1,0 +1,33 @@
+{
+  "name": "soajs.installer.local",
+  "description": "soajs local installer allows you to deploy soajs locally",
+  "version": "3.0.0",
+  "author": {
+    "name": "soajs team",
+    "email": "team@soajs.org"
+  },
+  "keywords": [
+    "soajs",
+    "api",
+    "visualizations",
+    "dashboards",
+    "dashboarding"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:soajs/soajs.installer.remote.git"
+  },
+  "license": "Apache-2.0",
+  "engines": {
+    "node": "*"
+  },
+  "dependencies": {
+    "path":"0.12.7",
+    "async":"3.1.0",
+    "soajs":"2.5.19",
+    "mkdirp": "0.5.1",
+    "yamljs": "0.3.0",
+    "request":"2.88.0",
+    "rimraf":"3.0.0"
+  }
+}
