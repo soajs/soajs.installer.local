@@ -104,6 +104,14 @@ const helpModule = {
 		output += "Refer to README.md file for more details about the commands and their arguments.";
 		output += "\n";
 		
+		output += "\n=======================\n\n";
+		output += "\nSOAJS Installer Versions:\n";
+		
+		output += "   Installer package [" + packagejson.version + "]\n";
+		output += "   Installer local [" + local_packagejson.version + "]\n";
+		output += "   Installer remote [" + remote_packagejson.version + "]\n";
+		output += "\n";
+		
 		//print and return
 		console.log(output);
 		return callback();
