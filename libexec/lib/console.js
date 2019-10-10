@@ -39,14 +39,15 @@ function getInstalledVersion() {
 	if (installerConfig && installerConfig.version) {
 		return installerConfig.version;
 	}
+	let version = null;
 	if (installerConfig.workingDirectory) {
-		let version = versionInfo.getLatest();
+		version = versionInfo.getLatest();
 		let workingDirectory = installerConfig.workingDirectory;
 		updateConfigFile(workingDirectory, version, (error) => {
 			logger.debug(`Update release version for the first time\n`);
 		});
 	}
-	return null;
+	return version;
 }
 
 function updateConfigFile(workingDirectory, version, cb) {

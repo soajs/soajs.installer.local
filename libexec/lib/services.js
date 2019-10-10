@@ -10,12 +10,23 @@ const installerConfig = require(path.normalize(process.env.PWD + "/../etc/config
 const serviceModule = require("./service");
 const mongoModule = require("./mongo");
 
+const versionInfo = require(path.normalize(process.env.PWD + "/../soajs.installer.versions/index.js"));
+
+/*
 const SOAJS_RMS = {
 	'gateway': "soajs.controller",
 	'urac': 'soajs.urac',
 	'oauth': 'soajs.oauth',
 	'multitenant': "soajs.multitenant"
 };
+*/
+
+function getInstalledVersion() {
+	if (installerConfig && installerConfig.version) {
+		return installerConfig.version;
+	}
+	return null;
+}
 
 let getEnv = (args, callback) => {
 	if (args.length < 1) {
@@ -79,25 +90,33 @@ const servicesModule = {
 					return callback(error);
 				}
 				
-				logger.info("Starting all SOAJS Services for " + requestedEnvironment + " Environment ... \n");
+				logger.info("Starting all SOAJS Services for " + requestedEnvironment + " Environment ...");
 				setTimeout(() => {
-					async.eachOfSeries(SOAJS_RMS, (oneRepo, oneService, mCb) => {
-						launchMyService(oneService, (error, response) => {
-							if (error) {
-								return mCb(error);
-							}
-							
-							if (response && response !== '') {
-								logger.debug(response + "\n");
-							}
+					let VERSION_INFO = versionInfo.getVersionInfo(getInstalledVersion());
+					if (!VERSION_INFO || !VERSION_INFO.services) {
+						return callback("Unable to get release information for the installed version [" + getInstalledVersion() + "]");
+					}
+					async.eachOfSeries(VERSION_INFO.services, (oneServiceInfo, oneService, mCb) => {
+						if (oneServiceInfo.type === "any") {
+							launchMyService(oneService, (error, response) => {
+								if (error) {
+									return mCb(error);
+								}
+								
+								if (response && response !== '') {
+									logger.debug(response + "\n");
+								}
+								return mCb(null, true);
+							});
+						} else {
 							return mCb(null, true);
-						});
+						}
 					}, (error) => {
 						if (error) {
 							return callback("Error starting the SOAJS Services");
 						}
 						
-						logger.info("=========================\nSOAJS Services started!\n=========================\n\n");
+						logger.info("=========================\nSOAJS Services started!\n=========================\n");
 						setTimeout(() => {
 							return callback();
 						}, 1000);
@@ -134,26 +153,34 @@ const servicesModule = {
 				return callback(`SOAJS Console is not installed!`);
 			}
 			
-			logger.info("Stopping SOAJS Services for " + requestedEnvironment + " Environment ... \n");
+			logger.info("Stopping SOAJS Services for " + requestedEnvironment + " Environment ...");
 			setTimeout(() => {
-				async.eachOfSeries(SOAJS_RMS, (oneRepo, oneService, mCb) => {
-					launchMyService(oneService, (error, response) => {
-						if (error) {
-							return mCb(error);
-						}
-						
-						if (response && response !== '') {
-							logger.debug(response + "\n");
-						}
-						
+				let VERSION_INFO = versionInfo.getVersionInfo(getInstalledVersion());
+				if (!VERSION_INFO || !VERSION_INFO.services) {
+					return callback("Unable to get release information for the installed version [" + getInstalledVersion() + "]");
+				}
+				async.eachOfSeries(VERSION_INFO.services, (oneServiceInfo, oneService, mCb) => {
+					if (oneServiceInfo.type === "any") {
+						launchMyService(oneService, (error, response) => {
+							if (error) {
+								return mCb(error);
+							}
+							
+							if (response && response !== '') {
+								logger.debug(response);
+							}
+							
+							return mCb(null, true);
+						});
+					} else {
 						return mCb(null, true);
-					});
+					}
 				}, (error) => {
 					if (error) {
 						return callback("Error stopping SOAJS Services");
 					}
 					
-					logger.info("=========================\nSOAJS Services Stopped!\n=========================\n\n");
+					logger.info("=========================\nSOAJS Services Stopped!\n=========================\n");
 					setTimeout(() => {
 						return callback();
 					}, 1000);
@@ -189,7 +216,7 @@ const servicesModule = {
 				return callback(`SOAJS Console is not installed!`);
 			}
 			
-			logger.info("Restarting SOAJS Services ...\n\n");
+			logger.info("Restarting SOAJS Services ...\n");
 			setTimeout(() => {
 				servicesModule.stop(args, (error) => {
 					if (error && error.toString() !== `SOAJS Console is not installed!`) {
