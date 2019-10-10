@@ -55,14 +55,14 @@ const helpModule = {
 				"custom": "Import custom data"
 			},
 			"service Operations": {
-				"start": "Start a SOAJS Service [gateway|urac|dashboard|oauth|multitenant]",
-				"stop": "Stop a SOAJS Service [gateway|urac|dashboard|oauth|multitenant]",
-				"restart": "reStart a SOAJS Service [gateway|urac|dashboard|oauth|multitenant]"
+				"start": "Start a SOAJS Service i.e. [gateway|urac|dashboard|oauth|multitenant]",
+				"stop": "Stop a SOAJS Service i.e. [gateway|urac|dashboard|oauth|multitenant]",
+				"restart": "reStart a SOAJS Service i.e. [gateway|urac|dashboard|oauth|multitenant]"
 			},
 			"services Operations": {
-				"start": "Start all SOAJS Services [gateway|urac|oauth|multitenant]",
-				"stop": "Stop all SOAJS Services [gateway|urac|oauth|multitenant]",
-				"restart": "reStart all SOAJS Services [gateway|urac|oauth|multitenant]"
+				"start": "Start all SOAJS Services i.e. [gateway|urac|oauth|multitenant]",
+				"stop": "Stop all SOAJS Services i.e. [gateway|urac|oauth|multitenant]",
+				"restart": "reStart all SOAJS Services i.e. [gateway|urac|oauth|multitenant]"
 			},
 			"profile Operations": {
 				"setPort": "Updates the MongoDB server port in the SOAJS profile",
