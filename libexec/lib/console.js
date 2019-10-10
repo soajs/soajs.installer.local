@@ -101,7 +101,7 @@ function installConsoleComponents(upgrade, cb) {
 		}
 		async.eachOfSeries(VERSION_INFO.services, (oneServiceInfo, oneService, mCb) => {
 			let oneRepo = oneServiceInfo.repo;
-			if (oneRepo.type === "console") {
+			if (oneServiceInfo.type === "console") {
 				if (oneServiceInfo.ver) {
 					oneRepo += "@" + oneServiceInfo.ver;
 				}
@@ -145,6 +145,8 @@ function installConsoleComponents(upgrade, cb) {
 					});
 					
 				});
+			} else {
+				return mCb(null, true);
 			}
 		}, (error) => {
 			if (error) {
@@ -410,7 +412,7 @@ const consoleModule = {
 								}
 								async.eachOfSeries(VERSION_INFO.services, (oneServiceInfo, oneService, mCb) => {
 									let oneRepo = oneServiceInfo.repo;
-									if (oneRepo.type === "console") {
+									if (oneServiceInfo.type === "console") {
 										logger.debug(`Removing ${oneService} files ...`);
 										logger.debug(path.normalize(installerConfig.workingDirectory + "/node_modules/" + oneRepo) + "\n");
 										rimraf(path.normalize(installerConfig.workingDirectory + "/node_modules/" + oneRepo), (error) => {
@@ -421,6 +423,8 @@ const consoleModule = {
 											logger.debug(`${oneService} --> ${oneRepo}: Removed!`);
 											return mCb();
 										});
+									} else {
+										return mCb();
 									}
 								}, (error) => {
 									if (error) {
@@ -512,8 +516,7 @@ const consoleModule = {
 					return callback("Unable to get release information for the installed version [" + getInstalledVersion() + "]");
 				}
 				async.eachOfSeries(VERSION_INFO.services, (oneServiceInfo, oneService, mCb) => {
-					let oneRepo = oneServiceInfo.repo;
-					if (oneRepo.type === "console") {
+					if (oneServiceInfo.type === "console") {
 						launchMyService(oneService, (error, response) => {
 							if (error) {
 								return mCb(error);
@@ -524,6 +527,8 @@ const consoleModule = {
 							}
 							return mCb(null, true);
 						});
+					} else {
+						return mCb(null, true);
 					}
 				}, (error) => {
 					if (error) {
@@ -592,8 +597,7 @@ const consoleModule = {
 				return callback("Unable to get release information for the installed version [" + getInstalledVersion() + "]");
 			}
 			async.eachOfSeries(VERSION_INFO.services, (oneServiceInfo, oneService, mCb) => {
-				let oneRepo = oneServiceInfo.repo;
-				if (oneRepo.type === "console") {
+				if (oneServiceInfo.type === "console") {
 					launchMyService(oneService, (error, response) => {
 						if (error) {
 							return mCb(error);
@@ -605,6 +609,8 @@ const consoleModule = {
 						
 						return mCb(null, true);
 					});
+				} else {
+					return mCb(null, true);
 				}
 			}, (error) => {
 				if (error) {
@@ -620,6 +626,7 @@ const consoleModule = {
 		}, 1000);
 		
 		function launchMyService(oneService, mCb) {
+			console.log([oneService, "--env=" + requestedEnvironment])
 			serviceModule.stop([oneService, "--env=" + requestedEnvironment], mCb)
 		}
 	},
