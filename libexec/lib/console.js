@@ -412,7 +412,7 @@ const consoleModule = {
 									let oneRepo = oneServiceInfo.repo;
 									if (oneRepo.type === "console") {
 										logger.debug(`Removing ${oneService} files ...`);
-										logger.debug(path.normalize(installerConfig.workingDirectory + "/node_modules/" + oneRepo + "\n");
+										logger.debug(path.normalize(installerConfig.workingDirectory + "/node_modules/" + oneRepo) + "\n");
 										rimraf(path.normalize(installerConfig.workingDirectory + "/node_modules/" + oneRepo, (error) => {
 											if (error) {
 												logger.error(error);
