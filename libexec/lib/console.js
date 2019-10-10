@@ -322,7 +322,7 @@ const consoleModule = {
 					let ms_and_core = SOAJS_CORE;
 					let VERSION_INFO = versionInfo.getVersionInfo(getInstalledVersion());
 					if (!VERSION_INFO) {
-						return cb("Unable to get release information for the installed version [" + getInstalledVersion() + "]");
+						return callback("Unable to get release information for the installed version [" + getInstalledVersion() + "]");
 					}
 					for (let ms in VERSION_INFO.sevices) {
 						if (VERSION_INFO.sevices[ms].repo) {
@@ -406,14 +406,14 @@ const consoleModule = {
 								//remove folders of microservices
 								let VERSION_INFO = versionInfo.getVersionInfo(getInstalledVersion());
 								if (!VERSION_INFO) {
-									return cb("Unable to get release information for the installed version [" + getInstalledVersion() + "]");
+									return callback("Unable to get release information for the installed version [" + getInstalledVersion() + "]");
 								}
 								async.eachOfSeries(VERSION_INFO.services, (oneServiceInfo, oneService, mCb) => {
 									let oneRepo = oneServiceInfo.repo;
 									if (oneRepo.type === "console") {
 										logger.debug(`Removing ${oneService} files ...`);
 										logger.debug(path.normalize(installerConfig.workingDirectory + "/node_modules/" + oneRepo) + "\n");
-										rimraf(path.normalize(installerConfig.workingDirectory + "/node_modules/" + oneRepo, (error) => {
+										rimraf(path.normalize(installerConfig.workingDirectory + "/node_modules/" + oneRepo), (error) => {
 											if (error) {
 												logger.error(error);
 												return mCb(error);
@@ -509,7 +509,7 @@ const consoleModule = {
 			setTimeout(() => {
 				let VERSION_INFO = versionInfo.getVersionInfo(getInstalledVersion());
 				if (!VERSION_INFO) {
-					return cb("Unable to get release information for the installed version [" + getInstalledVersion() + "]");
+					return callback("Unable to get release information for the installed version [" + getInstalledVersion() + "]");
 				}
 				async.eachOfSeries(VERSION_INFO.services, (oneServiceInfo, oneService, mCb) => {
 					let oneRepo = oneServiceInfo.repo;
@@ -589,7 +589,7 @@ const consoleModule = {
 		setTimeout(() => {
 			let VERSION_INFO = versionInfo.getVersionInfo(getInstalledVersion());
 			if (!VERSION_INFO) {
-				return cb("Unable to get release information for the installed version [" + getInstalledVersion() + "]");
+				return callback("Unable to get release information for the installed version [" + getInstalledVersion() + "]");
 			}
 			async.eachOfSeries(VERSION_INFO.services, (oneServiceInfo, oneService, mCb) => {
 				let oneRepo = oneServiceInfo.repo;
@@ -641,7 +641,7 @@ const consoleModule = {
 		
 		let VERSION_INFO = versionInfo.getVersionInfo(getInstalledVersion());
 		if (!VERSION_INFO) {
-			return cb("Unable to get release information for the installed version [" + getInstalledVersion() + "]");
+			return callback("Unable to get release information for the installed version [" + getInstalledVersion() + "]");
 		}
 		
 		let uiConfigFile = installerConfig.workingDirectory + "/node_modules/" + VERSION_INFO.services.ui + "/app/uiConfig.js";
