@@ -33,11 +33,18 @@ const SOAJS_CORE = {
 	'drivers': 'soajs.core.drivers',
 	'modules': 'soajs.core.modules',
 	'uracDriver': 'soajs.urac.driver',
-}
+};
 
 function getInstalledVersion() {
 	if (installerConfig && installerConfig.version) {
 		return installerConfig.version;
+	}
+	if (installerConfig.workingDirectory) {
+		let version = versionInfo.getLatest();
+		let workingDirectory = installerConfig.workingDirectory;
+		updateConfigFile(workingDirectory, version, (error) => {
+			logger.debug(`Update release version for the first time\n`);
+		});
 	}
 	return null;
 }
@@ -93,10 +100,10 @@ function installConsoleComponents(upgrade, cb) {
 	
 	//install repos in component
 	function runNPM() {
-		logger.debug("\nInstalling SOAJS Console Components ...");
+		logger.debug("\nInstalling SOAJS Console Components ...\n");
 		
 		let VERSION_INFO = versionInfo.getVersionInfo(getInstalledVersion());
-		if (!VERSION_INFO) {
+		if (!VERSION_INFO || !VERSION_INFO.services) {
 			return cb("Unable to get release information for the installed version [" + getInstalledVersion() + "]");
 		}
 		async.eachOfSeries(VERSION_INFO.services, (oneServiceInfo, oneService, mCb) => {
@@ -114,15 +121,17 @@ function installConsoleComponents(upgrade, cb) {
 						return mCb(null, true);
 					}
 					
-					logger.info(`Installing ${oneService} from NPM ${oneRepo} in ${installerConfig.workingDirectory} ...`);
+					let pathLoc = path.normalize(installerConfig.workingDirectory + "/node_modules/");
+					
+					logger.info(`Installing ${oneService} from NPM ${oneRepo} in ${pathLoc} ...`);
 					logger.debug(`sudo ${process.env.NPM_BIN} install ${oneRepo}`);
 					let modInstall = exec(`sudo ${process.env.NPM_BIN} install ${oneRepo}`, {
-						cwd: path.normalize(installerConfig.workingDirectory + "/node_modules")
+						cwd: pathLoc
 					});
 					
 					modInstall.stdout.on('data', (data) => {
 						if (data) {
-							process.stdout.write(data);
+							//process.stdout.write(data);
 						}
 					});
 					
@@ -134,13 +143,13 @@ function installConsoleComponents(upgrade, cb) {
 					
 					modInstall.on('close', (code) => {
 						if (code === 0) {
-							logger.debug(`${oneService} installed!`);
+							logger.debug(`${oneService} installed!\n`);
 							setTimeout(() => {
 								return mCb(null, true);
 							}, 1000);
 						}
 						else {
-							return mCb("Error installing " + oneService);
+							return mCb("Error installing " + oneService + "!\n");
 						}
 					});
 					
@@ -318,28 +327,31 @@ const consoleModule = {
 					return callback("Unable to Stop the SOAJS Console!");
 				}
 				
-				logger.info("Cleaning up before updating SOAJS Console ...");
+				logger.info("Cleaning up before updating SOAJS Console ...\n");
 				setTimeout(() => {
 					//remove folders of microservices && core
 					let ms_and_core = SOAJS_CORE;
 					let VERSION_INFO = versionInfo.getVersionInfo(getInstalledVersion());
-					if (!VERSION_INFO) {
+					if (!VERSION_INFO || !VERSION_INFO.services) {
 						return callback("Unable to get release information for the installed version [" + getInstalledVersion() + "]");
 					}
-					for (let ms in VERSION_INFO.sevices) {
-						if (VERSION_INFO.sevices[ms].repo) {
-							ms_and_core[ms] = VERSION_INFO.sevices[ms].repo;
+					for (let ms in VERSION_INFO.services) {
+						let oneServiceInfo = VERSION_INFO.services[ms];
+						if (oneServiceInfo.repo) {
+							if (oneServiceInfo.type === "console" || oneServiceInfo.type === "any") {
+								ms_and_core[ms] = oneServiceInfo.repo;
+							}
 						}
 					}
 					async.eachOfSeries(ms_and_core, (oneRepo, oneService, mCb) => {
 						logger.debug(`Removing ${oneService} files ...`);
-						logger.debug(path.normalize(installerConfig.workingDirectory + "/node_modules/" + ms_and_core[oneService]) + "\n");
+						logger.debug(path.normalize(installerConfig.workingDirectory + "/node_modules/" + ms_and_core[oneService]));
 						rimraf(path.normalize(installerConfig.workingDirectory + "/node_modules/" + ms_and_core[oneService]), (error) => {
 							if (error) {
 								logger.error(error);
 								return mCb(error);
 							}
-							logger.debug(`${oneService} --> ${oneRepo}: Removed!`);
+							logger.debug(oneService + " --> " + oneRepo + ": Removed!\n");
 							return mCb();
 						});
 					}, (error) => {
@@ -407,7 +419,7 @@ const consoleModule = {
 							setTimeout(() => {
 								//remove folders of microservices
 								let VERSION_INFO = versionInfo.getVersionInfo(getInstalledVersion());
-								if (!VERSION_INFO) {
+								if (!VERSION_INFO || !VERSION_INFO.services) {
 									return callback("Unable to get release information for the installed version [" + getInstalledVersion() + "]");
 								}
 								async.eachOfSeries(VERSION_INFO.services, (oneServiceInfo, oneService, mCb) => {
@@ -512,7 +524,7 @@ const consoleModule = {
 			logger.info("Starting Microservices for SOAJS Console in Dashboard Environment ... \n");
 			setTimeout(() => {
 				let VERSION_INFO = versionInfo.getVersionInfo(getInstalledVersion());
-				if (!VERSION_INFO) {
+				if (!VERSION_INFO || !VERSION_INFO.services) {
 					return callback("Unable to get release information for the installed version [" + getInstalledVersion() + "]");
 				}
 				async.eachOfSeries(VERSION_INFO.services, (oneServiceInfo, oneService, mCb) => {
@@ -593,7 +605,7 @@ const consoleModule = {
 		logger.info("Stopping Microservices for SOAJS Console in Dashboard Environment ... \n");
 		setTimeout(() => {
 			let VERSION_INFO = versionInfo.getVersionInfo(getInstalledVersion());
-			if (!VERSION_INFO) {
+			if (!VERSION_INFO || !VERSION_INFO.services) {
 				return callback("Unable to get release information for the installed version [" + getInstalledVersion() + "]");
 			}
 			async.eachOfSeries(VERSION_INFO.services, (oneServiceInfo, oneService, mCb) => {
@@ -626,7 +638,6 @@ const consoleModule = {
 		}, 1000);
 		
 		function launchMyService(oneService, mCb) {
-			console.log([oneService, "--env=" + requestedEnvironment])
 			serviceModule.stop([oneService, "--env=" + requestedEnvironment], mCb)
 		}
 	},
@@ -647,7 +658,7 @@ const consoleModule = {
 		}
 		
 		let VERSION_INFO = versionInfo.getVersionInfo(getInstalledVersion());
-		if (!VERSION_INFO) {
+		if (!VERSION_INFO || !VERSION_INFO.services) {
 			return callback("Unable to get release information for the installed version [" + getInstalledVersion() + "]");
 		}
 		
