@@ -10,8 +10,10 @@ const mkdirp = require("mkdirp");
 //set the logger
 const logger = require("../utils/utils.js").getLogger();
 
-const installerConfig = require(path.normalize(process.env.PWD + "/../etc/config.js"));
+const versionInfo = require(path.normalize(process.env.PWD + "/../soajs.installer.versions/index.js"));
 
+const installerConfig = require(path.normalize(process.env.PWD + "/../etc/config.js"));
+/*
 const SOAJS_RMS = {
     'gateway': "soajs.controller",
     'urac': 'soajs.urac',
@@ -20,6 +22,14 @@ const SOAJS_RMS = {
     'multitenant': "soajs.multitenant",
     'ui': 'soajs.dashboard.ui'
 };
+*/
+
+function getInstalledVersion() {
+	if (installerConfig && installerConfig.version) {
+		return installerConfig.version;
+	}
+	return null;
+}
 
 /**
  * Check if the requested service in the requested environment has a running process
@@ -29,7 +39,11 @@ const SOAJS_RMS = {
  */
 function checkIfServiceIsRunning(requestedService, requestedEnvironment, callback) {
     //check if there is a running process for the requested
-    exec(`ps aux | grep ${SOAJS_RMS[requestedService]}`, (error, cmdOutput) => {
+	let VERSION_INFO = versionInfo.getVersionInfo(getInstalledVersion());
+	if (!VERSION_INFO || !VERSION_INFO.services || !VERSION_INFO.services[requestedService]) {
+		return callback(false);
+	}
+    exec(`ps aux | grep ${VERSION_INFO.services[requestedService].repo}`, (error, cmdOutput) => {
         if (error || !cmdOutput) {
             return callback(false);
         }
@@ -42,13 +56,13 @@ function checkIfServiceIsRunning(requestedService, requestedEnvironment, callbac
 
                 if (!oneCMDLine.includes("grep")) {
                     if (requestedService === 'ui') {
-                        if (oneCMDLine.includes(SOAJS_RMS[requestedService])) {
+                        if (oneCMDLine.includes(VERSION_INFO.services.ui.repo)) {
                             let oneProcess = oneCMDLine.replace(/\s+/g, ' ').split(' ');
                             PID = oneProcess[1];
                         }
                     }
                     else {
-                        if (oneCMDLine.includes(SOAJS_RMS[requestedService]) && oneCMDLine.includes("--env=" + requestedEnvironment)) {
+                        if (oneCMDLine.includes(VERSION_INFO.services[requestedService].repo) && oneCMDLine.includes("--env=" + requestedEnvironment)) {
                             let oneProcess = oneCMDLine.replace(/\s+/g, ' ').split(' ');
                             PID = oneProcess[1];
                         }
@@ -83,8 +97,12 @@ const serviceModule = {
 
         //check if service is supported
         let requestedService = args[0];
+	    let VERSION_INFO = versionInfo.getVersionInfo(getInstalledVersion());
+	    if (!VERSION_INFO || !VERSION_INFO.services) {
+		    return callback("Unable to get release information for the installed version [" + getInstalledVersion() + "]");
+	    }
         let serviceType = (requestedService === 'ui') ? 'SOAJS Console' : 'Service';
-        if (!SOAJS_RMS[requestedService]) {
+        if (!VERSION_INFO.services[requestedService]) {
             serviceType = (requestedService === 'ui') ? 'SOAJS Console' : 'Service';
             return callback(`${serviceType} ${requestedService} is not supported!`);
         }
@@ -114,7 +132,7 @@ const serviceModule = {
         }
 
         //check if service folder exists
-        fs.stat(installerConfig.workingDirectory + "/node_modules/" + SOAJS_RMS[requestedService], (error, stats) => {
+        fs.stat(installerConfig.workingDirectory + "/node_modules/" + VERSION_INFO.services[requestedService].repo, (error, stats) => {
             if (error || !stats) {
                 return callback(`${serviceType} ${requestedService} is not installed!`);
             }
@@ -191,7 +209,7 @@ const serviceModule = {
                     let errLog = path.normalize(logLoc + `/${requestedEnvironment}-${requestedService}-err.log`);
                     let serviceErrLog = fs.openSync(errLog, "w");
 
-                    let serviceInstance = spawn(process.env.NODE_BIN, [installerConfig.workingDirectory + "/node_modules/" + SOAJS_RMS[requestedService] + `/index.js`, `--env=${requestedEnvironment}`], {
+                    let serviceInstance = spawn(process.env.NODE_BIN, [installerConfig.workingDirectory + "/node_modules/" + VERSION_INFO.services[requestedService].repo + `/index.js`, `--env=${requestedEnvironment}`], {
                         "env": process.env,
                         "stdio": ['ignore', serviceOutLog, serviceErrLog],
                         "detached": true,
@@ -221,7 +239,7 @@ const serviceModule = {
                     let errLog = path.normalize(logLoc + `/${requestedEnvironment}-${requestedService}-err.log`);
                     let serviceErrLog = fs.openSync(errLog, "w");
 
-                    let serviceInstance = spawn(process.env.NODE_BIN, [installerConfig.workingDirectory + "/node_modules/" + SOAJS_RMS[requestedService] + "/app/index.js"], {
+                    let serviceInstance = spawn(process.env.NODE_BIN, [installerConfig.workingDirectory + "/node_modules/" + VERSION_INFO.services[requestedService].repo + "/app/index.js"], {
                         "env": process.env,
                         "stdio": ['ignore', serviceOutLog, serviceErrLog],
                         "detached": true,
@@ -233,7 +251,7 @@ const serviceModule = {
 
             function nextInUI() {
                 //require the ui config to learn the host and the port values
-                fs.stat(installerConfig.workingDirectory + "/node_modules/" + SOAJS_RMS[requestedService] + "/app/config.js", (error) => {
+                fs.stat(installerConfig.workingDirectory + "/node_modules/" + VERSION_INFO.services[requestedService].repo + "/app/config.js", (error) => {
                     if (error) {
                         if (error.code === 'ENOENT') {
                             return callback(null, null);
@@ -243,7 +261,7 @@ const serviceModule = {
                         }
                     }
                     else {
-                        let uiConfig = require(installerConfig.workingDirectory + "/node_modules/" + SOAJS_RMS[requestedService] + "/app/config.js");
+                        let uiConfig = require(installerConfig.workingDirectory + "/node_modules/" + VERSION_INFO.services[requestedService].repo + "/app/config.js");
                         if (uiConfig && typeof uiConfig === 'object') {
                             //generate output message for ui
                             let output = `SOAJS Console UI started ...\n`;
@@ -270,8 +288,12 @@ const serviceModule = {
 
         //check if service is supported
         let requestedService = args[0];
+	    let VERSION_INFO = versionInfo.getVersionInfo(getInstalledVersion());
+	    if (!VERSION_INFO || !VERSION_INFO.services) {
+		    return callback("Unable to get release information for the installed version [" + getInstalledVersion() + "]");
+	    }
         let serviceType = (requestedService === 'ui') ? 'SOAJS Console' : 'Service';
-        if (!SOAJS_RMS[requestedService]) {
+        if (!VERSION_INFO.services[requestedService]) {
             serviceType = (requestedService === 'ui') ? 'SOAJS Console' : 'Service';
             return callback(`${serviceType} ${requestedService} is not supported!`);
         }
@@ -314,8 +336,12 @@ const serviceModule = {
 
         //check if service is supported
         let requestedService = args[0];
+	    let VERSION_INFO = versionInfo.getVersionInfo(getInstalledVersion());
+	    if (!VERSION_INFO || !VERSION_INFO.services) {
+		    return callback("Unable to get release information for the installed version [" + getInstalledVersion() + "]");
+	    }
         let serviceType = (requestedService === 'ui') ? 'SOAJS Console' : 'Service';
-        if (!SOAJS_RMS[requestedService]) {
+        if (!VERSION_INFO.services[requestedService]) {
             serviceType = (requestedService === 'ui') ? 'SOAJS Console' : 'Service';
             return callback(`${serviceType} ${requestedService} is not supported!`);
         }

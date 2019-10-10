@@ -3,6 +3,7 @@
 const packagejson = require("../../../package.json");
 const local_packagejson = require("../../package.json");
 const remote_packagejson = require("../../../soajs.installer.remote/package.json");
+const versions_packagejson = require("../../../soajs.installer.versions/package.json");
 
 const helpModule = {
 	/**
@@ -12,16 +13,11 @@ const helpModule = {
 	 * @returns {*}
 	 */
 	go: (args, callback) => {
-		let output = "\nSOAJS Installer Versions:\n";
-		
-		output += "   Installer package [" + packagejson.version + "]\n";
-		output += "   Installer local [" + local_packagejson.version + "]\n";
-		output += "   Installer remote [" + remote_packagejson.version + "]\n";
+		let output = "\nSOAJS Installer:\n";
 		
 		output += "\n=======================\n\n";
 		
 		output += "Usage: soajs MODULE OPERATION [PARAMs ...]\n\n";
-		
 		
 		output += "Available MODULES:\n";
 		output += "   console\n";
@@ -107,9 +103,10 @@ const helpModule = {
 		output += "\n=======================\n";
 		output += "SOAJS Installer Versions:\n";
 		
-		output += "   Installer package [" + packagejson.version + "]\n";
-		output += "   Installer local   [" + local_packagejson.version + "]\n";
-		output += "   Installer remote  [" + remote_packagejson.version + "]\n";
+		output += "   Installer package  [" + packagejson.version + "]\n";
+		output += "   Installer local    [" + local_packagejson.version + "]\n";
+		output += "   Installer remote   [" + remote_packagejson.version + "]\n";
+		output += "   Installer versions [" + versions_packagejson.version + "]\n";
 		
 		//print and return
 		console.log(output);
