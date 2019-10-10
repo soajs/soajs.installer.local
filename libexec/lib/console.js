@@ -101,7 +101,7 @@ function installConsoleComponents(upgrade, cb) {
 		}
 		async.eachOfSeries(VERSION_INFO.services, (oneServiceInfo, oneService, mCb) => {
 			let oneRepo = oneServiceInfo.repo;
-			if (oneServiceInfo.type === "console") {
+			if (oneServiceInfo.type === "console" || oneServiceInfo.type === "any") {
 				if (oneServiceInfo.ver) {
 					oneRepo += "@" + oneServiceInfo.ver;
 				}
@@ -412,7 +412,7 @@ const consoleModule = {
 								}
 								async.eachOfSeries(VERSION_INFO.services, (oneServiceInfo, oneService, mCb) => {
 									let oneRepo = oneServiceInfo.repo;
-									if (oneServiceInfo.type === "console") {
+									if (oneServiceInfo.type === "console" || oneServiceInfo.type === "any") {
 										logger.debug(`Removing ${oneService} files ...`);
 										logger.debug(path.normalize(installerConfig.workingDirectory + "/node_modules/" + oneRepo) + "\n");
 										rimraf(path.normalize(installerConfig.workingDirectory + "/node_modules/" + oneRepo), (error) => {
@@ -516,7 +516,7 @@ const consoleModule = {
 					return callback("Unable to get release information for the installed version [" + getInstalledVersion() + "]");
 				}
 				async.eachOfSeries(VERSION_INFO.services, (oneServiceInfo, oneService, mCb) => {
-					if (oneServiceInfo.type === "console") {
+					if (oneServiceInfo.type === "console" || oneServiceInfo.type === "any") {
 						launchMyService(oneService, (error, response) => {
 							if (error) {
 								return mCb(error);
@@ -597,7 +597,7 @@ const consoleModule = {
 				return callback("Unable to get release information for the installed version [" + getInstalledVersion() + "]");
 			}
 			async.eachOfSeries(VERSION_INFO.services, (oneServiceInfo, oneService, mCb) => {
-				if (oneServiceInfo.type === "console") {
+				if (oneServiceInfo.type === "console" || oneServiceInfo.type === "any") {
 					launchMyService(oneService, (error, response) => {
 						if (error) {
 							return mCb(error);
