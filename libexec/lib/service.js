@@ -187,7 +187,7 @@ const serviceModule = {
 
             process.env.SOAJS_ENV = requestedEnvironment;
             process.env.SOAJS_SRVIP = '127.0.0.1';
-            process.env.SOAJS_PROFILE = path.normalize(process.env.PWD + "/../data/soajs_profile.js");
+            process.env.SOAJS_PROFILE = path.normalize(process.env.PWD + "/../soajs.installer.local/data/soajs_profile.js");
             process.env.NODE_ENV = 'production';
 
             checkIfServiceIsRunning(requestedService, requestedEnvironment, (PID) => {

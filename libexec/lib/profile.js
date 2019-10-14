@@ -22,7 +22,7 @@ const profileModule = {
             return callback(null, `Unidentified input ${args.join(" ")}. Please use soajs profile setPort %number%.`);
         }
 
-        let profileDir = path.normalize(process.env.PWD + "/../data/");
+        let profileDir = path.normalize(process.env.PWD + "/../soajs.installer.local/data/");
         //check and create a backup file
         fs.stat(profileDir + "default.soajs_profile.js", (error, stats) => {
             if (error) {
@@ -82,7 +82,7 @@ const profileModule = {
             return callback(null, `Unidentified input ${args.join(" ")}. Please use soajs profile setHost %host_domain%.`);
         }
 
-        let profileDir = path.normalize(process.env.PWD + "/../data/");
+        let profileDir = path.normalize(process.env.PWD + "/../soajs.installer.local/data/");
         //check and create a backup file
         fs.stat(profileDir + "default.soajs_profile.js", (error, stats) => {
             if (error) {

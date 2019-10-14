@@ -265,7 +265,7 @@ let mongoModule = {
      */
     clean: (args, callback) => {
         //get profile path
-        let profilePath = path.normalize(process.env.PWD + "/../data/soajs_profile.js");
+        let profilePath = path.normalize(process.env.PWD + "/../soajs.installer.local/data/soajs_profile.js");
 
         //check if profile is found
         fs.stat(profilePath, (error) => {
@@ -333,8 +333,8 @@ let mongoModule = {
             return callback(null, `Select one of the following strategies: ${strategies.join(" ")}.`);
         }
         let strategyFunction = require("../migrate/" + strategy + ".js");
-        let profilePath = path.normalize(process.env.PWD + "/../data/soajs_profile.js");
-        let dataPath = path.normalize(process.env.PWD + "/../data/provision/");
+        let profilePath = path.normalize(process.env.PWD + "/../soajs.installer.local/data/soajs_profile.js");
+        let dataPath = path.normalize(process.env.PWD + "/../soajs.installer.local/data/provision/");
         return strategyFunction(profilePath, dataPath, callback);
     },
 
@@ -365,7 +365,7 @@ let mongoModule = {
             dataPath = dataPath + '/';
 
         if (fs.existsSync(dataPath)) {
-            let profilePath = path.normalize(process.env.PWD + "/../data/soajs_profile.js");
+            let profilePath = path.normalize(process.env.PWD + "/../soajs.installer.local/data/soajs_profile.js");
             let mongoCustom = require("../custom/index.js");
             return mongoCustom(profilePath, dataPath, cleanDataBefore, callback);
         }
@@ -385,7 +385,7 @@ let mongoModule = {
         let workingDirectory = installerConfig.workingDirectory;
 
         //get profile path
-        let profilePath = path.normalize(process.env.PWD + "/../data/soajs_profile.js");
+        let profilePath = path.normalize(process.env.PWD + "/../soajs.installer.local/data/soajs_profile.js");
         let profile;
 
         //check if profile is found
@@ -399,7 +399,7 @@ let mongoModule = {
 
             //use soajs.core.modules to create a connection to core_provision database
             let mongoConnection = new Mongo(profile);
-            let dataPath = path.normalize(process.env.PWD + "/../data/provision/");
+            let dataPath = path.normalize(process.env.PWD + "/../soajs.installer.local/data/provision/");
 
             //drop old core_provision database
             mongoConnection.dropDatabase((error) => {
