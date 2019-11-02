@@ -17,7 +17,7 @@ let lib = {
             records.push(rec);
         });
         if (records && Array.isArray(records) && records.length > 0) {
-            async.each(
+            async.eachSeries(
                 records,
                 (e, cb) => {
                     let condition = {[condAnchor]: e[condAnchor]};
@@ -62,7 +62,7 @@ let lib = {
             records.push(rec);
         });
         if (records && Array.isArray(records) && records.length > 0) {
-            async.each(
+            async.eachSeries(
                 records,
                 (e, cb) => {
                     let condition = {token: e.token};
@@ -108,7 +108,7 @@ let lib = {
             records.push(rec);
         });
         if (records && Array.isArray(records) && records.length > 0) {
-            async.each(
+            async.eachSeries(
                 records,
                 (e, cb) => {
                     profile.name = e.tenant.code + "_urac";
@@ -155,7 +155,7 @@ let lib = {
             records.push(rec);
         });
         if (records && Array.isArray(records) && records.length > 0) {
-            async.each(
+            async.eachSeries(
                 records,
                 (e, cb) => {
                     profile.name = e.tenant.code + "_urac";
@@ -208,7 +208,7 @@ module.exports = (profilePath, dataPath, cleanDataBefore, callback) => {
         profile = require(profilePath);
         //use soajs.core.modules to create a connection to core_provision database
         let mongoConnection = new Mongo(profile);
-        async.series([
+        async.waterfall([
                 function (cb) {
                     //check for environment data
                     if (fs.existsSync(dataPath + "environment/")) {
