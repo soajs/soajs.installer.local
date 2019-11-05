@@ -26,12 +26,16 @@ const SOAJS_CORE = {
 	'uracDriver': 'soajs.urac.driver',
 };
 
-function getInstalledVersion() {
+function getInstalledVersion(update) {
 	if (installerConfig && installerConfig.version) {
+		let workingDirectory = installerConfig.workingDirectory;
 		if (!installerConfig.patch) {
-			let workingDirectory = installerConfig.workingDirectory;
 			updateConfigFile(workingDirectory, installerConfig.version, () => {
 				logger.debug(`Update release patch for the first time`);
+			});
+		} else if (update){
+			updateConfigFile(workingDirectory, installerConfig.version, () => {
+				logger.debug(`Updating release version & patch`);
 			});
 		}
 		return installerConfig.version;
@@ -336,7 +340,7 @@ const consoleModule = {
 				setTimeout(() => {
 					//remove folders of microservices && core
 					let ms_and_core = SOAJS_CORE;
-					let VERSION_INFO = versionInfo.getVersionInfo(getInstalledVersion());
+					let VERSION_INFO = versionInfo.getVersionInfo(getInstalledVersion(true));
 					if (!VERSION_INFO || !VERSION_INFO.services) {
 						return callback("Unable to get release information for the installed version [" + getInstalledVersion() + "]");
 					}
