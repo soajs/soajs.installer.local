@@ -20,6 +20,9 @@ switch(askedModule){
 	case 'mongo':
 		soajsModule = "mongo.js";
 		break;
+	case 'release':
+		soajsModule = "release.js";
+		break;
 	case 'profile':
 		soajsModule = "profile.js";
 		break;

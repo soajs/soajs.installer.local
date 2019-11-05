@@ -17,16 +17,7 @@ const versionInfo = require(path.normalize(process.env.PWD + "/../soajs.installe
 
 //set the logger
 const logger = require("../utils/utils.js").getLogger();
-/*
-const SOAJS_RMS = {
-	'urac': 'soajs.urac',
-	'oauth': 'soajs.oauth',
-	'dashboard': 'soajs.dashboard',
-	'gateway': "soajs.controller",
-	'multitenant': "soajs.multitenant",
-	'ui': 'soajs.dashboard.ui'
-};
-*/
+
 const SOAJS_CORE = {
 	'soajs': 'soajs',
 	'libs': 'soajs.core.libs',
@@ -37,14 +28,20 @@ const SOAJS_CORE = {
 
 function getInstalledVersion() {
 	if (installerConfig && installerConfig.version) {
+		if (!installerConfig.patch) {
+			let workingDirectory = installerConfig.workingDirectory;
+			updateConfigFile(workingDirectory, installerConfig.version, () => {
+				logger.debug(`Update release patch for the first time`);
+			});
+		}
 		return installerConfig.version;
 	}
 	let version = null;
 	if (installerConfig.workingDirectory) {
 		version = versionInfo.getLatest();
 		let workingDirectory = installerConfig.workingDirectory;
-		updateConfigFile(workingDirectory, version, (error) => {
-			logger.debug(`Update release version for the first time\n`);
+		updateConfigFile(workingDirectory, version, () => {
+			logger.debug(`Update release version for the first time`);
 		});
 	}
 	return version;
@@ -54,8 +51,15 @@ function updateConfigFile(workingDirectory, version, cb) {
 	if (!installerConfig) {
 		installerConfig = {};
 	}
+	let VERSION_INFO = null;
+	if (version && version !== '') {
+		VERSION_INFO = versionInfo.getVersionInfo(version);
+	}
 	installerConfig.workingDirectory = workingDirectory;
 	installerConfig.version = version;
+	if (VERSION_INFO) {
+		installerConfig.patch = VERSION_INFO.patch;
+	}
 	let newData = "'use strict';\n\n";
 	newData += "module.exports = " + JSON.stringify(installerConfig, null, 2) + ";\n";
 	fs.writeFile(path.normalize(process.env.PWD + "/../etc/config.js"), newData, cb);
@@ -320,7 +324,7 @@ const consoleModule = {
 		
 		ifNotSudo(callback);
 		
-		logger.info("Updating SOAJS Console ...\n\n");
+		logger.info("Updating SOAJS Console ...");
 		setTimeout(() => {
 			//stop microservices
 			consoleModule.stop(args, (error) => {
@@ -452,7 +456,7 @@ const consoleModule = {
 										}
 										
 										//clean up the configuration file
-										updateConfigFile('', null, (error) => {
+										updateConfigFile('', null, () => {
 											logger.info("=========================\nSOAJS Console Removed!\n=========================\n\n");
 											setTimeout(() => {
 												return callback();

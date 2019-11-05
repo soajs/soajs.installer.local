@@ -21,6 +21,7 @@ const helpModule = {
 		
 		output += "Available MODULES:\n";
 		output += "   console\n";
+		output += "   release\n";
 		output += "   mongo\n";
 		output += "   service\n";
 		output += "   services\n";
@@ -38,6 +39,9 @@ const helpModule = {
 				"stop": "Stops all the Microservices of the SOAJS Console",
 				"restart": "Restarts all the Microservices of the SOAJS Console",
 				"setHost": "Updates the console server host domain"
+			},
+			"release Operations": {
+				"info": "Return information about the installed release and if updates are available",
 			},
 			"mongo Operations": {
 				"install": "Creates the MongoDB configuration file and updates the SOAJS profile",
