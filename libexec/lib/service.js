@@ -385,7 +385,7 @@ const serviceModule = {
 		if (argument && argument.includes("--info")) {
 			let output = "Available services: \n";
 			if (availableService.info && availableService.info.length > 0) {
-				output += "\t" + availableService.info.join(" \n");
+				output += "\t" + availableService.info.join(" \n\t");
 			} else {
 				output += "No services are available to install at this time!";
 			}
