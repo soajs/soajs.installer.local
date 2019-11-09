@@ -33,7 +33,7 @@ function getInstalledVersion(update) {
 			updateConfigFile(workingDirectory, installerConfig.version, () => {
 				logger.debug(`Update release patch for the first time`);
 			});
-		} else if (update){
+		} else if (update) {
 			updateConfigFile(workingDirectory, installerConfig.version, () => {
 				logger.debug(`Updating release version & patch`);
 			});
@@ -338,50 +338,86 @@ const consoleModule = {
 				
 				logger.info("Cleaning up before updating SOAJS Console ...\n");
 				setTimeout(() => {
-					//remove folders of microservices && core
-					let ms_and_core = SOAJS_CORE;
-					let VERSION_INFO = versionInfo.getVersionInfo(getInstalledVersion(true));
-					if (!VERSION_INFO || !VERSION_INFO.services) {
-						return callback("Unable to get release information for the installed version [" + getInstalledVersion() + "]");
-					}
-					for (let ms in VERSION_INFO.services) {
-						let oneServiceInfo = VERSION_INFO.services[ms];
-						if (oneServiceInfo.repo) {
-							if (oneServiceInfo.type === "console" || oneServiceInfo.type === "any") {
-								ms_and_core[ms] = oneServiceInfo.repo;
-							}
+					let cleanDataBefore = false;
+					if (args.length > 0) {
+						if (args[0] === "--clean") {
+							cleanDataBefore = true;
 						}
 					}
-					async.eachOfSeries(ms_and_core, (oneRepo, oneService, mCb) => {
-						logger.debug(`Removing ${oneService} files ...`);
-						logger.debug(path.normalize(installerConfig.workingDirectory + "/node_modules/" + ms_and_core[oneService]));
-						rimraf(path.normalize(installerConfig.workingDirectory + "/node_modules/" + ms_and_core[oneService]), (error) => {
-							if (error) {
-								logger.error(error);
-								return mCb(error);
-							}
-							logger.debug(oneService + " --> " + oneRepo + ": Removed!\n");
-							return mCb();
-						});
-					}, (error) => {
-						if (error) {
-							return callback("Error Cleaning up before updating SOAJS Console ...");
-						}
-						//update all repository content
-						installConsoleComponents(true, (error) => {
-							if (error) {
-								return callback("Error while updating the SOAJS Console files!")
-							}
-							
-							//start microservices
-							consoleModule.start(args, (error) => {
-								if (error) {
-									return callback("Unable to Restart the SOAJS Console!");
-								}
-								
-								return callback(null, "SOAJS Console Updated!");
+					let packlockFile = path.normalize(installerConfig.workingDirectory + "/package-lock.json");
+					fs.stat(packlockFile, (error, stats) => {
+						if (stats) {
+							rimraf(packlockFile, () => {
 							});
-						});
+						}
+						if (cleanDataBefore) {
+							logger.info("\t Cleaning everything ...\n");
+							
+							rimraf(path.normalize(installerConfig.workingDirectory + "/node_modules/*"), (error) => {
+								if (error) {
+									logger.error(error);
+									return callback("Error while updating the SOAJS Console files!")
+								}
+								//update all repository content
+								installConsoleComponents(true, (error) => {
+									if (error) {
+										return callback("Error while updating the SOAJS Console files!")
+									}
+									//start microservices
+									consoleModule.start(args, (error) => {
+										if (error) {
+											return callback("Unable to Restart the SOAJS Console!");
+										}
+										return callback(null, "SOAJS Console Updated!");
+									});
+								});
+							});
+						} else {
+							logger.info("\t Cleaning SOAJS deployed microservices ...\n");
+							//remove folders of microservices && core
+							let ms_and_core = SOAJS_CORE;
+							let VERSION_INFO = versionInfo.getVersionInfo(getInstalledVersion(true));
+							if (!VERSION_INFO || !VERSION_INFO.services) {
+								return callback("Unable to get release information for the installed version [" + getInstalledVersion() + "]");
+							}
+							for (let ms in VERSION_INFO.services) {
+								let oneServiceInfo = VERSION_INFO.services[ms];
+								if (oneServiceInfo.repo) {
+									if (oneServiceInfo.type === "console" || oneServiceInfo.type === "any") {
+										ms_and_core[ms] = oneServiceInfo.repo;
+									}
+								}
+							}
+							async.eachOfSeries(ms_and_core, (oneRepo, oneService, mCb) => {
+								logger.debug(`Removing ${oneService} files ...`);
+								logger.debug(path.normalize(installerConfig.workingDirectory + "/node_modules/" + ms_and_core[oneService]));
+								rimraf(path.normalize(installerConfig.workingDirectory + "/node_modules/" + ms_and_core[oneService]), (error) => {
+									if (error) {
+										logger.error(error);
+										return mCb(error);
+									}
+									logger.debug(oneService + " --> " + oneRepo + ": Removed!\n");
+									return mCb();
+								});
+							}, (error) => {
+								if (error) {
+									return callback("Error Cleaning up before updating SOAJS Console ...");
+								}
+								//update all repository content
+								installConsoleComponents(true, (error) => {
+									if (error) {
+										return callback("Error while updating the SOAJS Console files!")
+									}
+									//start microservices
+									consoleModule.start(args, (error) => {
+										if (error) {
+											return callback("Unable to Restart the SOAJS Console!");
+										}
+										return callback(null, "SOAJS Console Updated!");
+									});
+								});
+							});
+						}
 					});
 				}, 2000);
 			});
