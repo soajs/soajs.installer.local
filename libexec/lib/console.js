@@ -707,8 +707,8 @@ const consoleModule = {
 			return callback("Unable to get release information for the installed version [" + getInstalledVersion() + "]");
 		}
 		
-		let uiConfigFile = installerConfig.workingDirectory + "/node_modules/" + VERSION_INFO.services.ui + "/app/uiConfig.js";
-		let uiConfigFile_original = installerConfig.workingDirectory + "/node_modules/" + VERSION_INFO.services.ui + "/app/original_uiConfig.js";
+		let uiConfigFile = installerConfig.workingDirectory + "/node_modules/" + VERSION_INFO.services.ui.repo + "/app/uiConfig.js";
+		let uiConfigFile_original = installerConfig.workingDirectory + "/node_modules/" + VERSION_INFO.services.ui.repo + "/app/original_uiConfig.js";
 		fs.stat(uiConfigFile_original, (error, stats) => {
 			if (!stats) {
 				fs.copyFile(uiConfigFile, uiConfigFile_original, (error) => {
@@ -727,7 +727,7 @@ const consoleModule = {
 				tntData = tntData.replace(/localhost/g, args[0]);
 				fs.writeFileSync(uiConfigFile, tntData, "utf8");
 				
-				let configFile = installerConfig.workingDirectory + "/node_modules/" + VERSION_INFO.services.ui + "/app/config.js";
+				let configFile = installerConfig.workingDirectory + "/node_modules/" + VERSION_INFO.services.ui.repo + "/app/config.js";
 				let soajsProfile = require(configFile);
 				soajsProfile.host = args[0];
 				
