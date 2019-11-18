@@ -10,98 +10,132 @@ var dsbrdProduct = {
     "scope": {
         "acl": {
             "dashboard": {
-                "urac": {
-                    "2": {
-                        "access": true,
-                        "apisPermission": "restricted",
-                        "get": [{
-                            "group": "Administration",
-                            "apis": {
-                                "/admin/all": {
-                                    "access": true
-                                },
-                                "/admin/listUsers": {
-                                    "access": true
-                                },
-                                "/admin/changeUserStatus": {
-                                    "access": true
-                                },
-                                "/admin/group/list": {
-                                    "access": true
-                                }
-                            }
-                        }, {
-                            "group": "My Account",
-                            "apis": {
-                                "/account/getUser": {
-                                    "access": true
-                                }
-                            }
-                        }, {
-                            "group": "Guest Password Settings",
-                            "apis": {
-                                "/forgotPassword": {
-                                    "access": false
-                                }
-                            }
-                        }, {
-                            "group": "Guest Email Validation",
-                            "apis": {
-                                "/changeEmail/validate": {
-                                    "access": true
-                                }
-                            }
-                        }],
-                        "post": [{
-                            "group": "My Account",
-                            "apis": {
-                                "/account/changeEmail": {
-                                    "access": true
-                                },
-                                "/account/changePassword": {
-                                    "access": true
-                                },
-                                "/account/editProfile": {
-                                    "access": true
-                                }
-                            }
-                        }, {
-                            "group": "Administration",
-                            "apis": {
-                                "/admin/addUser": {
-                                    "access": true
-                                },
-                                "/admin/editUser": {
-                                    "access": true
-                                },
-                                "/admin/group/add": {
-                                    "access": true
-                                },
-                                "/admin/group/edit": {
-                                    "access": true
-                                },
-	                            "/admin/group/addEnvironment" : {
-		                            "access" : true
-	                            }
-                            }
-                        }, {
-                            "group": "Guest Password Settings",
-                            "apis": {
-                                "/resetPassword": {
-                                    "access": false
-                                }
-                            }
-                        }],
-                        "delete": [{
-                            "group": "Administration",
-                            "apis": {
-                                "/admin/group/delete": {
-                                    "access": true
-                                }
-                            }
-                        }]
-                    }
-                },
+	            "urac": {
+		            "3": {
+			            "access": true,
+			            "apisPermission": "restricted",
+			            "get": [
+				            {
+					            "group": "Administration",
+					            "apis": {
+						            "/admin/all": {
+							            "access": true
+						            }
+					            }
+				            }, {
+					            "group": "User Administration",
+					            "apis": {
+						            "/admin/users": {
+							            "access": true
+						            }
+					            }
+				            },
+				            {
+					            "group": "Group Administration",
+					            "apis": {
+						            "/admin/groups": {
+							            "access": true
+						            }
+					            }
+				            }, {
+					            "group": "My Account",
+					            "apis": {
+						            "/user": {
+							            "access": true
+						            }
+					            }
+				            }, {
+					            "group": "My account guest",
+					            "apis": {
+						            "/password/forgot": {
+							            "access": false
+						            },
+						            "/validate/changeEmail": {
+							            "access": true
+						            },
+					            }
+				            }],
+			            "post": [
+				            {
+					            "group": "User Administration",
+					            "apis": {
+						            "/admin/user": {
+							            "access": true
+						            }
+					            }
+				            },
+				            {
+					            "group": "Group Administration",
+					            "apis": {
+						            "/admin/group": {
+							            "access": true
+						            }
+					            }
+				            },
+				            {
+					            "group": "Guest Password Settings",
+					            "apis": {
+						            "/resetPassword": {
+							            "access": false
+						            }
+					            }
+				            }],
+			            "put": [
+				            {
+					            "group": "User administration",
+					            "apis": {
+						            "/admin/user/status": {
+							            "access": true
+						            },
+						            "/admin/user": {
+							            "access": true
+						            },
+					            }
+				            },
+				            {
+					            "group": "Group administration",
+					            "apis": {
+						            "/admin/group": {
+							            "access": true
+						            },
+						            "/admin/groups/environments": {
+							            "access": true
+						            }
+					            }
+				            },
+				            {
+					            "group": "My account",
+					            "apis": {
+						            "/account/email": {
+							            "access": true
+						            },
+						            "/account/password": {
+							            "access": true
+						            },
+						            "/account": {
+							            "access": true
+						            }
+					            }
+				            },
+				            {
+					            "group": "My account Guest",
+					            "apis": {
+						            "/password/reset": {
+							            "access": false
+						            }
+					            }
+				            }
+			            ],
+			            "delete": [{
+				            "group": "Group Administration",
+				            "apis": {
+					            "/admin/group": {
+						            "access": true
+					            }
+				            }
+			            }]
+		            }
+	            },
                 "dashboard": {
                     "1": {
                         "access": true,
@@ -187,9 +221,9 @@ var dsbrdProduct = {
                         "delete": ["Tokenization"]
                     }],
                     "urac": [{
-                        "version": "2",
-                        "post": ["Guest Password Settings"],
-                        "get": ["Guest Password Settings", "Guest Email Validation"]
+                        "version": "3",
+                        "put": ["My account guest"],
+                        "get": ["My account guest"]
                     }],
                     "dashboard": [{
                         "version": "1",
@@ -213,10 +247,11 @@ var dsbrdProduct = {
                         "delete": ["Tokenization", "User Tokenization", "Cient Tokenization"]
                     }],
                     "urac": [{
-                        "version": "2",
-                        "get": ["Guest Email Account Settings", "Administration", "My Account", "Guest Password Settings", "Guest Email Validation"],
-                        "post": ["Administration", "My Account", "Guest Password Settings"],
-                        "delete": ["Administration"]
+                        "version": "3",
+                        "get": ["My account guest", "Administration", "My Account", "User Administration", "Group Administration"],
+                        "post": ["My Account", "User Administration", "Group Administration"],
+                        "put": ["My account guest", "My Account", "User Administration", "Group Administration"],
+                        "delete": ["Group Administration"]
                     }],
                     "dashboard": [{
                         "version": "1",
@@ -243,9 +278,10 @@ var dsbrdProduct = {
                         "get": ["Guest"]
                     }],
                     "urac": [{
-                        "version": "2",
-                        "get": ["Guest Email Account Settings", "Tenant", "My Account", "Guest Password Settings", "Guest Email Validation"],
-                        "post": ["My Account", "Guest Password Settings"]
+                        "version": "3",
+                        "get": ["My account guest", "My Account"],
+                        "put": ["My Account", "My account guest"],
+                        "post": ["My Account"]
                     }],
                     "dashboard": [{
                         "version": "1",
@@ -272,9 +308,10 @@ var dsbrdProduct = {
                         "get": ["Guest"]
                     }],
                     "urac": [{
-                        "version": "2",
-                        "get": ["My Account", "Tenant", "Guest Email Account Settings", "Guest Password Settings", "Guest Email Validation"],
-                        "post": ["My Account", "Guest Password Settings"]
+                        "version": "3",
+                        "get": ["My Account", "My account guest"],
+                        "put": ["My Account", "My account guest"],
+                        "post": ["My Account"]
                     }],
                     "dashboard": [{
                         "version": "1",
