@@ -71,14 +71,6 @@ var dsbrdProduct = {
 							            "access": true
 						            }
 					            }
-				            },
-				            {
-					            "group": "Guest Password Settings",
-					            "apis": {
-						            "/resetPassword": {
-							            "access": false
-						            }
-					            }
 				            }],
 			            "put": [
 				            {
@@ -249,7 +241,7 @@ var dsbrdProduct = {
                     "urac": [{
                         "version": "3",
                         "get": ["My account guest", "Administration", "My Account", "User Administration", "Group Administration"],
-                        "post": ["My Account", "User Administration", "Group Administration"],
+                        "post": ["User Administration", "Group Administration"],
                         "put": ["My account guest", "My Account", "User Administration", "Group Administration"],
                         "delete": ["Group Administration"]
                     }],
@@ -280,8 +272,7 @@ var dsbrdProduct = {
                     "urac": [{
                         "version": "3",
                         "get": ["My account guest", "My Account"],
-                        "put": ["My Account", "My account guest"],
-                        "post": ["My Account"]
+                        "put": ["My Account", "My account guest"]
                     }],
                     "dashboard": [{
                         "version": "1",
