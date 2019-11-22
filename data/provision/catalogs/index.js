@@ -91,7 +91,7 @@ var catalogs = [
 					"prefix": "soajsorg",
 					"name": "soajs",
 					"tag": "latest",
-					"pullPolicy": "IfNotPresent"
+					"pullPolicy": "Always"
 				},
 				"sourceCode": {},
 				"readinessProbe": {
@@ -202,7 +202,7 @@ var catalogs = [
 					"prefix": "soajsorg",
 					"name": "soajs",
 					"tag": "latest",
-					"pullPolicy": "IfNotPresent"
+					"pullPolicy": "Always"
 				},
 				"sourceCode": {},
 				"readinessProbe": {
@@ -317,7 +317,7 @@ var catalogs = [
 					"prefix": "soajsorg",
 					"name": "soajs",
 					"tag": "latest",
-					"pullPolicy": "IfNotPresent"
+					"pullPolicy": "Always"
 				},
 				"sourceCode": {},
 				"readinessProbe": {
@@ -447,7 +447,7 @@ var catalogs = [
 					"prefix": "soajsorg",
 					"name": "soajs",
 					"tag": "latest",
-					"pullPolicy": "IfNotPresent"
+					"pullPolicy": "Always"
 				},
 				"sourceCode": {},
 				"readinessProbe": {
@@ -581,7 +581,7 @@ var catalogs = [
 					"prefix": "soajsorg",
 					"name": "nginx",
 					"tag": "latest",
-					"pullPolicy": "IfNotPresent"
+					"pullPolicy": "Always"
 				},
 				"sourceCode": {
 					"configuration": {
@@ -705,7 +705,7 @@ var catalogs = [
 					"prefix" : "",
 					"name" : "mongo",
 					"tag" : "3.4.10",
-					"pullPolicy" : "IfNotPresent"
+					"pullPolicy" : "Always"
 				},
 				"sourceCode": {
 					"configuration": {
