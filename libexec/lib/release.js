@@ -75,7 +75,7 @@ const servicesModule = {
 		output += "The microservices versions:\n";
 		getmsVersion((error, msVersions) => {
 			
-			if (error){
+			if (error) {
 				output += "\t Unable to  get versions information at this time.\n";
 			}
 			if (msVersions && msVersions.length > 0) {
@@ -96,6 +96,16 @@ const servicesModule = {
 							if (releaseInfo.release.previousPatches.includes(releaseInfo.current.patch)) {
 								output += "\tyou do not have the latest patch, the latest patch is: [" + releaseInfo.release.patch + "].\n";
 								output += "\tkindly run [sudo soajs console update] to update to the latest patch.\n";
+								if (releaseInfo.release.prerequisite && Array.isArray(releaseInfo.release.prerequisite)) {
+									for (let i = 0; i < releaseInfo.release.prerequisite.length; i++) {
+										let prerequisite = releaseInfo.release.prerequisite[i];
+										if (prerequisite.patch === releaseInfo.release.patch) {
+											if (prerequisite.migration) {
+												output += "\tthis patch has migrate(s) prerequisite: \n\t\t sudo soajs mongo migrate "+prerequisite.migration.join(" \n\t\t sudo soajs mongo migrate ")+"\n";
+											}
+										}
+									}
+								}
 							}
 						}
 					}
