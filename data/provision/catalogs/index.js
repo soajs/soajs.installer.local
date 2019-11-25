@@ -78,6 +78,7 @@ var catalogs = [
 		"name": "SOAJS Service Recipe",
 		"type": "service",
 		"subtype": "soajs",
+		"soajs" : true,
 		"description": "This recipe allows you to deploy a services built using the SOAJS framework",
 		"locked": true,
         "restriction": {
@@ -181,6 +182,7 @@ var catalogs = [
 		"name": "SOAJS Endpoint Recipe",
 		"type": "service",
 		"subtype": "soajs",
+		"soajs" : true,
 		"description": "This recipe allows you to deploy an endpoint built using the SOAJS API Builder",
 		"locked": true,
 		"restriction": {
@@ -288,6 +290,7 @@ var catalogs = [
 		"name": "SOAJS API Gateway Recipe",
 		"type": "service",
 		"subtype": "soajs",
+		"soajs" : true,
 		"description": "This recipe allows you to deploy the SOAJS API Gateway",
 		"locked": true,
         "restriction": {
@@ -418,6 +421,7 @@ var catalogs = [
 		"name": "SOAJS Daemon Recipe",
 		"type": "daemon",
 		"subtype": "soajs",
+		"soajs" : true,
 		"description": "This recipe allows you to deploy a daemons built using the SOAJS framework",
 		"locked": true,
         "restriction": {
@@ -520,6 +524,7 @@ var catalogs = [
 		"name": "Nginx Recipe",
 		"type": "server",
 		"subtype": "nginx",
+		"soajs" : true,
 		"description": "This recipe allows you to deploy an nginx server",
 		"locked": true,
         "restriction": {
