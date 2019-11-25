@@ -398,6 +398,10 @@ var catalogs = [
 					"SOAJS_MONGO_PASSWORD": {
 						"type": "computed",
 						"value": "$SOAJS_MONGO_PASSWORD"
+					},
+					"SOAJS_BCRYPT" : {
+						"type" : "static",
+						"value" : "true"
 					}
 				},
 				"cmd": {
