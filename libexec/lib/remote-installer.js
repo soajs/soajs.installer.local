@@ -45,7 +45,7 @@ const serviceModule = {
 	'stop': (args, callback) => {
 		
 		//check if there is a running process for the requested
-		exec(`ps aux | grep soajs-remote`, (error, cmdOutput) => {
+		exec(`ps aux | grep soajs.installer.remote`, (error, cmdOutput) => {
 			if(error || !cmdOutput){
 				return callback();
 			}
@@ -57,7 +57,7 @@ const serviceModule = {
 				cmdOutput.forEach((oneCMDLine) => {
 					
 					if(!oneCMDLine.includes("grep")){
-						if(oneCMDLine.includes("soajs-remote")){
+						if(oneCMDLine.includes("soajs.installer.remote")){
 							let oneProcess = oneCMDLine.replace(/\s+/g, ' ').split(' ');
 							PID = oneProcess[1];
 						}

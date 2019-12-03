@@ -26,7 +26,6 @@ const helpModule = {
 		output += "   service\n";
 		output += "   services\n";
 		output += "   profile\n";
-		output += "   docker\n";
 		output += "   kubernetes\n";
 		output += "   remote-installer\n\n";
 		
@@ -69,20 +68,7 @@ const helpModule = {
 				"setPort": "Updates the MongoDB server port in the SOAJS profile",
 				"setHost": "Updates the MongoDB server host in the SOAJS profile"
 			},
-			"docker Operations": {
-				"install": "Downloads, installs and starts Docker on your machine",
-				"remove": "Removes Docker from your machine",
-				"start": "Starts Docker Swarm on your machine",
-				"stop": "Stops Docker Swarm on your machine",
-				"restart": "Restarts Docker Swarm on your machine",
-				"connect": "Configures and displays how to connect to Docker Swarm on your machine"
-			},
 			"kubernetes Operations": {
-				"install": "Downloads, installs and starts Kubernetes on your machine",
-				"remove": "Removes Kubernetes from your machine",
-				"start": "Starts Kubernetes on your machine ( Not supported on Ubuntu )",
-				"stop": "Stops Kubernetes on your machine ( Not supported on Ubuntu )",
-				"restart": "Restarts Kubernetes on your machine ( Not supported on Ubuntu )",
 				"connect": "Configures and displays how to connect to Kubernetes on your machine"
 			},
 			"remote-installer Operations": {

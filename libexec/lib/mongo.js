@@ -367,7 +367,7 @@ let mongoModule = {
         if (fs.existsSync(dataPath)) {
             let profilePath = path.normalize(process.env.PWD + "/../soajs.installer.local/data/soajs_profile.js");
             let mongoCustom = require("../custom/index.js");
-            return mongoCustom(profilePath, dataPath, cleanDataBefore, callback);
+            return mongoCustom.runPath(profilePath, dataPath, cleanDataBefore, callback);
         }
         else {
             return callback(null, `Custom folder [folder] not found!`);
@@ -522,124 +522,6 @@ let mongoModule = {
                     "addGroups": function (cb) {
                         let record = require(dataFolder + "urac/groups/owner.js");
                         mongo.insert("groups", record, cb);
-                    },
-
-                    "uracIndex": function (cb) {
-                        let indexes = [
-                            {
-                                col: 'users',
-                                index: {username: 1},
-                                options: {unique: true}
-                            },
-                            {
-                                col: 'users',
-                                index: {email: 1},
-                                options: {unique: true}
-                            },
-                            {
-                                col: 'users',
-                                index: {username: 1, status: 1},
-                                options: null
-                            },
-                            {
-                                col: 'users',
-                                index: {username: 1, email: 1, status: 1},
-                                options: null
-                            },
-                            {
-                                col: 'users',
-                                index: {username: 1, email: 1, firstName: 1, lastName: 1},
-                                options: null
-                            },
-                            {
-                                col: 'users',
-                                index: {email: 1, status: 1},
-                                options: null
-                            },
-
-                            {
-                                col: 'users',
-                                index: {groups: 1, 'tenant.id': 1},
-                                options: null
-                            },
-                            {
-                                col: 'users',
-                                index: {username: 1, 'tenant.id': 1},
-                                options: null
-                            },
-                            {
-                                col: 'users',
-                                index: {'tenant.id': 1},
-                                options: null
-                            },
-                            {
-                                col: 'users',
-                                index: {'tenant.code': 1},
-                                options: null
-                            },
-
-
-                            {
-                                col: 'users',
-                                index: {
-                                    'config.allowedTenants.tenant.id': 1,
-                                    'config.allowedTenants.tenant.pin.code': 1
-                                },
-                                options: {unique: true, sparse: true}
-                            },
-
-                            {
-                                col: 'users',
-                                index: {status: 1},
-                                options: null
-                            },
-                            {
-                                col: 'users',
-                                index: {_id: 1, status: 1},
-                                options: null
-                            },
-                            {
-                                col: 'users',
-                                index: {locked: 1},
-                                options: null
-                            },
-
-                            {
-                                col: 'groups',
-                                index: {code: 1, 'tenant.id': 1},
-                                options: null
-                            },
-                            {
-                                col: 'groups',
-                                index: {'tenant.id': 1},
-                                options: null
-                            },
-                            {
-                                col: 'groups',
-                                index: {locked: 1},
-                                options: null
-                            },
-
-                            {
-                                col: 'tokens',
-                                index: {token: 1},
-                                options: {unique: true}
-                            },
-                            {
-                                col: 'tokens',
-                                index: {userId: 1, service: 1, status: 1},
-                                options: null
-                            },
-                            {
-                                col: 'tokens',
-                                index: {token: 1, service: 1, status: 1},
-                                options: null
-                            }
-                        ];
-
-                        async.each(indexes, function (oneIndex, callback) {
-                            mongo.createIndex(oneIndex.col, oneIndex.index, oneIndex.options, callback);
-                        }, cb);
                     }
                 }, mCb);
             }
