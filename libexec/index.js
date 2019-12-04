@@ -19,6 +19,15 @@ if (semver.lt(installerBinVersion, binaryVer)) {
 	logger.info("https://soajsorg.atlassian.net/wiki/spaces/IN/pages/1427472397/Update+Installer");
 	process.exit();
 }
+let localVer = "3.0.12";
+const local_packagejson = require("../package.json");
+let installerLocalVersion = local_packagejson.version;
+if (semver.lt(installerLocalVersion, localVer)) {
+	logger.error(`Installer code is outdated at least version [${localVer}] of soajs.installer.local must be installed.`);
+	logger.info("To learn how to upgrade installer code, check out section 2 [installer code update] at this link:");
+	logger.info("https://soajsorg.atlassian.net/wiki/spaces/IN/pages/1427472397/Update+Installer");
+	process.exit();
+}
 
 //set the process arguments and remove the first 2, they are not needed
 let processArguments = process.argv;
