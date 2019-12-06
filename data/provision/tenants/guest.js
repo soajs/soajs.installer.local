@@ -1,12 +1,12 @@
 'use strict';
-var techop = {
+var doc = {
 	"_id": "5c0e74ba9acc3c5a84a51259",
 	"type": "product",
 	"code": "DBTN",
 	"locked": true,
 	"console": true,
-    "name": "Console Tenant",
-    "description": "This is the tenant that holds the access rights and configuration for the console users with DSBRD_GUEST as Guest default package",
+	"name": "Console Tenant",
+	"description": "This is the tenant that holds the access rights and configuration for the console users with DSBRD_GUEST as Guest default package",
 	"oauth": {
 		"secret": "this is a secret",
 		"disabled": 0,
@@ -29,16 +29,16 @@ var techop = {
 							"device": null,
 							"geo": null,
 							"env": "DASHBOARD",
-                            "dashboardAccess" : true,
+							"dashboardAccess": true,
 							"expDate": null
 						}
 					],
-					"config" : {
+					"config": {
 						"dashboard": {
-							"oauth":{
+							"oauth": {
 								"loginMode": "urac"
 							},
-							"commonFields":{
+							"commonFields": {
 								"mail": {
 									"from": 'me@localhost.com',
 									"transport": {
@@ -86,7 +86,7 @@ var techop = {
 			]
 		}
 	],
-    "tag": "Console"
+	"tag": "Console"
 };
 
-module.exports = techop;
+module.exports = doc;

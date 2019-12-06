@@ -1,6 +1,6 @@
 'use strict';
 
-let integration = {
+let doc = {
 	"_id": "5de641418fbdcb4d57c8144c",
 	"type": "product",
 	"code": "INTE",
@@ -28,11 +28,8 @@ let integration = {
 			"keys": [
 				{
 					"key": "946e69347238b44d4f74a4b7994cf9f3",
-					"extKeys": [
-					],
-					"config": {
-					
-					}
+					"extKeys": [],
+					"config": {}
 				}
 			]
 		}
@@ -41,4 +38,4 @@ let integration = {
 	"tag": "Integration"
 };
 
-module.exports = integration;
+module.exports = doc;
