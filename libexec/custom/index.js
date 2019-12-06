@@ -274,6 +274,9 @@ let custom = {
 		
 		//NOTE: templates is an object with keys as collections and value a function to be called as "docManipulation" to manipulate the record before inserting it into mongo
 		//use soajs.core.modules to create a connection to core_provision database
+		if (!templates) {
+			templates = {};
+		}
 		let mongoConnection = new Mongo(profile);
 		async.waterfall([
 				function (cb) {
@@ -284,6 +287,9 @@ let custom = {
 							"condAnchor": "name",
 							"objId": "_id"
 						};
+						if (templates.catalogs && typeof templates.catalogs === "function") {
+							config.docManipulation = templates.catalogs;
+						}
 						return lib.basic(config, dataPath + "catalogs/", mongoConnection, cb);
 					} else {
 						return cb(null);
@@ -298,6 +304,9 @@ let custom = {
 							"objId": "_id",
 							"delete": cleanDataBefore
 						};
+						if (templates.customRegistry && typeof templates.customRegistry === "function") {
+							config.docManipulation = templates.customRegistry;
+						}
 						return lib.basic(config, dataPath + "customRegistry/", mongoConnection, cb);
 					} else {
 						return cb(null);
@@ -312,6 +321,9 @@ let custom = {
 							"objId": "_id",
 							"delete": cleanDataBefore
 						};
+						if (templates.environment && typeof templates.environment === "function") {
+							config.docManipulation = templates.environment;
+						}
 						return lib.basic(config, dataPath + path, mongoConnection, cb);
 					};
 					if (fs.existsSync(dataPath + "environments/")) {
@@ -333,6 +345,9 @@ let custom = {
 							"objId": "_id",
 							"delete": cleanDataBefore
 						};
+						if (templates.gitAccounts && typeof templates.gitAccounts === "function") {
+							config.docManipulation = templates.gitAccounts;
+						}
 						return lib.basic(config, dataPath + "gitAccounts/", mongoConnection, cb);
 					} else {
 						return cb(null);
@@ -347,6 +362,9 @@ let custom = {
 							"objId": "_id",
 							"delete": cleanDataBefore
 						};
+						if (templates.infra && typeof templates.infra === "function") {
+							config.docManipulation = templates.infra;
+						}
 						return lib.basic(config, dataPath + "infra/", mongoConnection, cb);
 					} else {
 						return cb(null);
@@ -361,6 +379,9 @@ let custom = {
 							"objId": "_id",
 							"delete": cleanDataBefore
 						};
+						if (templates.products && typeof templates.products === "function") {
+							config.docManipulation = templates.products;
+						}
 						return lib.basic(config, dataPath + "products/", mongoConnection, cb);
 					} else {
 						return cb(null);
@@ -374,6 +395,9 @@ let custom = {
 							"condAnchor": "name",
 							"objId": "_id"
 						};
+						if (templates.resources && typeof templates.resources === "function") {
+							config.docManipulation = templates.resources;
+						}
 						return lib.basic(config, dataPath + "resources/", mongoConnection, cb);
 					} else {
 						return cb(null);
@@ -387,6 +411,9 @@ let custom = {
 							"condAnchor": "name",
 							"objId": "_id"
 						};
+						if (templates.services && typeof templates.services === "function") {
+							config.docManipulation = templates.services;
+						}
 						return lib.basic(config, dataPath + "services/", mongoConnection, cb);
 					} else {
 						return cb(null);
@@ -400,6 +427,9 @@ let custom = {
 							"condAnchor": "name",
 							"objId": "_id"
 						};
+						if (templates.templates && typeof templates.templates === "function") {
+							config.docManipulation = templates.templates;
+						}
 						return lib.basic(config, dataPath + "templates/", mongoConnection, cb);
 					} else {
 						return cb(null);
@@ -420,6 +450,9 @@ let custom = {
 											doc.applications[appIndex].appId = mongoConnection.ObjectId(doc.applications[appIndex].appId);
 										}
 									}
+								}
+								if (templates.tenants && typeof templates.tenants === "function") {
+									templates.tenants(doc);
 								}
 							}
 						};

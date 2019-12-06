@@ -48,8 +48,6 @@ var techop = {
 								}
 							},
 							"urac": {
-								"hashIterations": 1024,
-								"seedLength": 32,
 								"link": {
 									"addUser": "http://dashboard.soajs.org:80/#/setNewPassword",
 									"changeEmail": "http://dashboard.soajs.org:80/#/changeEmail/validate",
@@ -61,24 +59,24 @@ var techop = {
 								"mail": {
 									"join": {
 										"subject": 'Welcome to SOAJS',
-										"path": "%wrkDir%/soajs/node_modules/soajs.urac/mail/urac/join.tmpl"
+										"path": "%wrkDir%/node_modules/soajs.urac/mail/urac/join.tmpl"
 									},
 									"forgotPassword": {
 										"subject": 'Reset Your Password at SOAJS',
-										"path": "%wrkDir%/soajs/node_modules/soajs.urac/mail/urac/forgotPassword.tmpl"
+										"path": "%wrkDir%/node_modules/soajs.urac/mail/urac/forgotPassword.tmpl"
 									},
 									"addUser": {
 										"subject": 'Account Created at SOAJS',
-										"path": "%wrkDir%/soajs/node_modules/soajs.urac/mail/urac/addUser.tmpl"
+										"path": "%wrkDir%/node_modules/soajs.urac/mail/urac/addUser.tmpl"
 									},
 									"changeUserStatus": {
 										"subject": "Account Status changed at SOAJS",
 										//use custom HTML
-										"path": "%wrkDir%/soajs/node_modules/soajs.urac/mail/urac/changeUserStatus.tmpl"
+										"path": "%wrkDir%/node_modules/soajs.urac/mail/urac/changeUserStatus.tmpl"
 									},
 									"changeEmail": {
 										"subject": "Change Account Email at SOAJS",
-										"path": "%wrkDir%/soajs/node_modules/soajs.urac/mail/urac/changeEmail.tmpl"
+										"path": "%wrkDir%/node_modules/soajs.urac/mail/urac/changeEmail.tmpl"
 									}
 								}
 							}
