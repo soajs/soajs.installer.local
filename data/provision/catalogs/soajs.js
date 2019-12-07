@@ -27,7 +27,7 @@ let doc = {
 			"readinessProbe": {
 				"httpGet": {
 					"path": "/heartbeat",
-					"port": "inherit"
+					"port": "maintenance"
 				},
 				"initialDelaySeconds": 5,
 				"timeoutSeconds": 2,
@@ -60,6 +60,10 @@ let doc = {
 				"SOAJS_REGISTRY_API": {
 					"type": "computed",
 					"value": "$SOAJS_REGISTRY_API"
+				},
+				"SOAJS_BCRYPT" : {
+					"type" : "static",
+					"value" : "true"
 				}
 			},
 			"settings": {

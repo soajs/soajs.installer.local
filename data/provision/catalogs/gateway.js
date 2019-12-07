@@ -41,14 +41,14 @@ let doc = {
 					"docker": {},
 					"kubernetes": {
 						"volume": {
-							"name": "soajsprofile1",
+							"name": "soajsprofile",
 							"secret": {
 								"secretName": "soajsprofile"
 							}
 						},
 						"volumeMount": {
 							"mountPath": "/opt/soajs/profile/",
-							"name": "soajsprofile1"
+							"name": "soajsprofile"
 						}
 					}
 				}
@@ -72,10 +72,6 @@ let doc = {
 				"SOAJS_PROFILE": {
 					"type": "static",
 					"value": "/opt/soajs/profile/soajsprofile"
-				},
-				"SOAJS_SRV_MEMORY": {
-					"type": "computed",
-					"value": "$SOAJS_SRV_MEMORY"
 				},
 				"SOAJS_DEPLOY_HA": {
 					"type": "computed",

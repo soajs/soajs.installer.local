@@ -1,11 +1,12 @@
 'use strict';
 
 let doc = {
-	"_id": "5deaa178be70f13a183a9c72",
-	"name": "Nginx BC",
+	"_id": "5de80bd55bf7b41dd3db0148",
+	"name": "Nginx SSL Gateway BC",
 	"type": "server",
 	"subtype": "nginx",
-	"description": "This recipe allows you to deploy an nginx server with backward compatibilities",
+	"soajs": true,
+	"description": "This recipe allows you to deploy an nginx SSL server with backward compatibilities. This requires a ReadWriteMany pvc with claim name as nfs-pvc",
 	"restriction": {
 		"deployment": [
 			"container"
@@ -57,6 +58,21 @@ let doc = {
 				}
 			],
 			"voluming": [
+				{
+					"docker": {},
+					"kubernetes": {
+						"volume": {
+							"name": "soajscert",
+							"persistentVolumeClaim": {
+								"claimName": "nfs-pvc"
+							}
+						},
+						"volumeMount": {
+							"mountPath": "/opt/soajs/certificates/",
+							"name": "soajscert"
+						}
+					}
+				}
 			],
 			"restartPolicy": {
 				"condition": "any",
@@ -74,9 +90,33 @@ let doc = {
 					"type": "computed",
 					"value": "$SOAJS_ENV"
 				},
+				"SOAJS_NX_DOMAIN": {
+					"type": "computed",
+					"value": "$SOAJS_NX_DOMAIN"
+				},
+				"SOAJS_NX_API_DOMAIN": {
+					"type": "computed",
+					"value": "$SOAJS_NX_API_DOMAIN"
+				},
+				"SOAJS_NX_CONTROLLER_NB": {
+					"type": "computed",
+					"value": "$SOAJS_NX_CONTROLLER_NB"
+				},
+				"SOAJS_NX_CONTROLLER_IP": {
+					"type": "computed",
+					"value": "$SOAJS_NX_CONTROLLER_IP_N"
+				},
+				"SOAJS_NX_CONTROLLER_PORT": {
+					"type": "computed",
+					"value": "$SOAJS_NX_CONTROLLER_PORT"
+				},
 				"SOAJS_NX_SITE_DOMAIN": {
 					"type": "computed",
 					"value": "$SOAJS_NX_SITE_DOMAIN"
+				},
+				"SOAJS_SSL_CONFIG": {
+					"type": "static",
+					"value": "{'email':'team@soajs.org'}",
 				}
 			},
 			"settings": {

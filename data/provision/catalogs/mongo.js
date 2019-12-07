@@ -1,6 +1,7 @@
 'use strict';
 
 let doc = {
+	"_id": "5dead79e52e7046c7c0a4d53",
 	"name": "Mongo Recipe",
 	"type": "cluster",
 	"subtype": "mongo",
@@ -16,7 +17,7 @@ let doc = {
 			"image": {
 				"prefix": "",
 				"name": "mongo",
-				"tag": "3.6.16",
+				"tag": "4.2.1",
 				"pullPolicy": "Always",
 				"repositoryType": "public",
 				"override": true
@@ -85,6 +86,8 @@ let doc = {
 				}
 			}
 		}
-	}
+	},
+	"v": 1,
+	"ts": new Date().getTime()
 };
 module.exports = doc;

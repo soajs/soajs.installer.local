@@ -60,6 +60,10 @@ let doc = {
 				"SOAJS_REGISTRY_API": {
 					"type": "computed",
 					"value": "$SOAJS_REGISTRY_API"
+				},
+				"SOAJS_BCRYPT" : {
+					"type" : "static",
+					"value" : "true"
 				}
 			},
 			"settings": {

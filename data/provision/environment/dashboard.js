@@ -6,7 +6,6 @@ let doc = {
 	"locked": true,
 	"port": 4000,
 	"protocol": "http",
-	"profile": "/soajs/FILES/profiles/profile.js",
 	"deployer": {
 		"type": "manual",
 		"selected": "manual",

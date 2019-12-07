@@ -1,11 +1,10 @@
 'use strict';
 
 let doc = {
-	"_id": "5de80bd55bf7b41dd3db0148",
+	"_id": "5deaa187be70f13a183a9c73",
 	"name": "Nginx SSL BC",
 	"type": "server",
 	"subtype": "nginx",
-	"soajs": true,
 	"description": "This recipe allows you to deploy an nginx SSL server with backward compatibilities. This requires a ReadWriteMany pvc with claim name as nfs-pvc",
 	"restriction": {
 		"deployment": [
@@ -89,26 +88,6 @@ let doc = {
 				"SOAJS_ENV": {
 					"type": "computed",
 					"value": "$SOAJS_ENV"
-				},
-				"SOAJS_NX_DOMAIN": {
-					"type": "computed",
-					"value": "$SOAJS_NX_DOMAIN"
-				},
-				"SOAJS_NX_API_DOMAIN": {
-					"type": "computed",
-					"value": "$SOAJS_NX_API_DOMAIN"
-				},
-				"SOAJS_NX_CONTROLLER_NB": {
-					"type": "computed",
-					"value": "$SOAJS_NX_CONTROLLER_NB"
-				},
-				"SOAJS_NX_CONTROLLER_IP": {
-					"type": "computed",
-					"value": "$SOAJS_NX_CONTROLLER_IP_N"
-				},
-				"SOAJS_NX_CONTROLLER_PORT": {
-					"type": "computed",
-					"value": "$SOAJS_NX_CONTROLLER_PORT"
 				},
 				"SOAJS_NX_SITE_DOMAIN": {
 					"type": "computed",
