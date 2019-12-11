@@ -110,6 +110,9 @@ let lib = {
 						}
 					};
 					
+					if (config.docManipulation && typeof config.docManipulation === 'function') {
+						config.docManipulation(e);
+					}
 					if (config.delete) {
 						mongoConnection.remove("oauth_token", condition, (error) => {
 							if (error) {
@@ -169,6 +172,9 @@ let lib = {
 						}
 					};
 					
+					if (config.docManipulation && typeof config.docManipulation === 'function') {
+						config.docManipulation(e);
+					}
 					if (config.delete) {
 						mongoConnection.remove("users", condition, (error) => {
 							if (error) {
@@ -228,6 +234,9 @@ let lib = {
 						}
 					};
 					
+					if (config.docManipulation && typeof config.docManipulation === 'function') {
+						config.docManipulation(e);
+					}
 					if (config.delete) {
 						mongoConnection.remove("groups", condition, (error) => {
 							if (error) {
@@ -479,6 +488,9 @@ let custom = {
 						let config = {
 							"delete": cleanDataBefore
 						};
+						if (templates.users && typeof templates.users === "function") {
+							config.docManipulation = templates.users;
+						}
 						return lib.users(config, dataPath + "urac/users/", profile, cb);
 					} else {
 						return cb(null);
