@@ -61,8 +61,6 @@ switch (askedModule) {
 		break;
 	case 'remote-installer':
 		soajsModule = "remote-installer.js";
-		logger.info("PLease contact SOAJS @ https://www.soajs.org/contactUs");
-		process.exit();
 		break;
 	case '--help':
 		soajsModule = "help.js";

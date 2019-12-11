@@ -72,8 +72,7 @@ const helpModule = {
 				"connect": "Configures and displays how to connect to Kubernetes on your machine"
 			},
 			"remote-installer Operations": {
-				"start": "Starts the SOAJS Remote Cloud Installer",
-				"stop": "Stops the SOAJS Remote Cloud Installer"
+				"install": "Starts the SOAJS Remote Cloud Installer"
 			}
 		};
 		

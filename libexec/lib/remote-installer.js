@@ -4,120 +4,116 @@ const path = require("path");
 const fs = require("fs");
 const spawn = require("child_process").spawn;
 const exec = require("child_process").exec;
+const versionInfo = require(path.normalize(process.env.PWD + "/../soajs.installer.versions/index.js"));
+const remote_installer = require(path.normalize(process.env.PWD + "/../soajs.installer.remote/libexec/index.js"));
+
+//set the logger
+const logger = require("../utils/utils.js").getLogger();
 
 const serviceModule = {
 	
-	/**
-	 * This command will start the soajs remote cloud installer
-	 * @param args {Array}
-	 * @param callback {Function}
-	 */
-	'start': (args, callback) => {
-		let logLoc = "/usr/local/var/log/soajs/";
-		let outLog = path.normalize(logLoc + `/remote-installer-out.log`);
-		let serviceOutLog = fs.openSync(outLog, "w");
-		
-		let errLog = path.normalize(logLoc + `/remote-installer-err.log`);
-		let serviceErrLog = fs.openSync(errLog, "w");
-		
-		let serviceInstance = spawn(process.env.NODE_BIN, [ path.normalize(process.env.PWD + `/../soajs.installer.remote/index.js`)], {
-			"env": process.env,
-			"stdio": ['ignore', serviceOutLog, serviceErrLog],
-			"detached": true,
+	'install': (args, callback) => {
+		logger.debug(`SOAJS Remote Cloud Installer started ...`);
+		if (args.length === 0) {
+			return callback("Please provide remote installer configuration... for more information PLease contact SOAJS @ https://www.soajs.org/contactUs");
+		}
+		fs.stat(args[0], (error, stats) => {
+			if (error || !stats) {
+				return callback("Unable find remote installer configuration (might be permissions): " + args[0]);
+			}
+			fs.readFile(args[0], (error, userConfiguration) => {
+				if (error || !userConfiguration) {
+					return callback("Unable read remote installer configuration (might be permissions): " + args[0]);
+				}
+				try {
+					userConfiguration = JSON.parse(userConfiguration);
+				} catch (e) {
+					return callback("Unable parse remote installer configuration (might be permissions): " + args[0]);
+				}
+				
+				let VERSION_INFO = versionInfo.getVersionInfo();
+				if (!VERSION_INFO || !VERSION_INFO.services) {
+					return callback("Unable continue, missing installer versions information!");
+				}
+				let dataPath = path.normalize(process.env.PWD + "/../soajs.installer.remote/data/provision/");
+				let options = {
+					"versions": VERSION_INFO,
+					
+					"driverName": "kubernetes",
+					"dataPath": dataPath,
+					"importer": require('./../custom/index.js'),
+					
+					"mongo": userConfiguration.mongo,
+					"kubernetes": userConfiguration.kubernetes,
+					"nginx": userConfiguration.nginx,
+					"owner": userConfiguration.owner
+				};
+				remote_installer.install(options, (error) => {
+					return callback(error, "SOAJS remote installer done!");
+				});
+			});
 		});
-		serviceInstance.unref();
-		
-		//generate out message for service
-		let output = `SOAJS Remote Cloud Installer started ...\n`;
-		output += `Open this link in your browser [ http://localhost:1337/ ]\n`;
-		output += "Logs:\n";
-		output += `[ out ] -> ${outLog}\n`;
-		output += `[ err ] -> ${errLog}\n`;
-		return callback(null, output);
 	},
 	
 	/**
-	 * This command will find the process id of the soajs remote installed and kill it
+	 * Migrate soajs provision data
 	 * @param args
 	 * @param callback
-	 * @returns {*}
 	 */
-	'stop': (args, callback) => {
+	migrate: (args, callback) => {
 		
-		//check if there is a running process for the requested
-		exec(`ps aux | grep soajs.installer.remote`, (error, cmdOutput) => {
-			if(error || !cmdOutput){
-				return callback();
+		if (args.length === 0) {
+			return callback(null, "Missing migration strategy!");
+		}
+		let strategies =  require(path.normalize(process.env.PWD + "/../soajs.installer.remote/libexec/migrate/config.js"));
+		let strategy = args[0];
+		
+		if (strategies.indexOf(strategy) === -1) {
+			return callback(null, `Select one of the following strategies: ${strategies.join(" ")}.`);
+		}
+		args.shift();
+		
+		if (args.length === 0) {
+			return callback("Please provide remote installer configuration... for more information PLease contact SOAJS @ https://www.soajs.org/contactUs");
+		}
+		fs.stat(args[0], (error, stats) => {
+			if (error || !stats) {
+				return callback("Unable find remote installer configuration (might be permissions): " + args[0]);
 			}
-			
-			//go through the returned output and find the process ID
-			cmdOutput = cmdOutput.split("\n");
-			if(Array.isArray(cmdOutput) && cmdOutput.length > 0){
-				let PID;
-				cmdOutput.forEach((oneCMDLine) => {
-					
-					if(!oneCMDLine.includes("grep")){
-						if(oneCMDLine.includes("soajs.installer.remote")){
-							let oneProcess = oneCMDLine.replace(/\s+/g, ' ').split(' ');
-							PID = oneProcess[1];
-						}
-					}
-				});
-				
-				//if no PID return, nothing to do
-				if(!PID){
-					return callback();
+			fs.readFile(args[0], (error, userConfiguration) => {
+				if (error || !userConfiguration) {
+					return callback("Unable read remote installer configuration (might be permissions): " + args[0]);
 				}
+				try {
+					userConfiguration = JSON.parse(userConfiguration);
+				} catch (e) {
+					return callback("Unable parse remote installer configuration (might be permissions): " + args[0]);
+				}
+				let VERSION_INFO = versionInfo.getVersionInfo();
+				if (!VERSION_INFO || !VERSION_INFO.services) {
+					return callback("Unable continue, missing installer versions information!");
+				}
+				let dataPath = path.normalize(process.env.PWD + "/../soajs.installer.remote/data/provision/");
+				let options = {
+					"versions": VERSION_INFO,
+					
+					"driverName": "kubernetes",
+					"dataPath": dataPath,
+					"importer": require('./../custom/index.js'),
+					
+					"mongo": userConfiguration.mongo,
+					"kubernetes": userConfiguration.kubernetes,
+					"nginx": userConfiguration.nginx,
+					"owner": userConfiguration.owner
+				};
 				
-				//stop the running process
-				exec(`kill -9 ${PID}`, (error) => {
-					if(error){
-						return callback(error);
-					}
-					else{
-						return callback(null, `SOAJS Remote Cloud Installer Terminated ...`);
-					}
+				remote_installer.migrate(options, strategy, (error, response) => {
+					
+					return callback(error, response);
 				});
-			}
-			else {
-				return callback();
-			}
+			});
 		});
-	},
-
-    /**
-     * Migrate soajs provision data
-     * @param args
-     * @param callback
-     */
-    migrate: (args, callback) => {
-        //todo check args
-        if (!Array.isArray(args) || args.length === 0) {
-            return callback(null, "Missing migration strategy!");
-        }
-        let strategies = require("../migrate/config.js");
-
-        if (args.length > 1) {
-            args.shift();
-            return callback(null, `Unidentified input ${args.join(" ")}. Please use soajs remote-installer migrate %strategy%.`);
-        }
-
-        // check if strategy is available
-        let strategy = args[0];
-        if (strategies.indexOf(strategy) === -1) {
-            return callback(null, `Select one of the following strategies: ${strategies.join(" ")}.`);
-        }
-        let strategyFunction = require("../migrate/" + strategy + ".js");
-        let profilePath = path.normalize(process.env.PWD + "/../soajs.installer.remote/data/startup/profile.js");
-        let dataPath = path.normalize(process.env.PWD + "/../soajs.installer.remote/data/startup/");
-
-        if (!fs.existsSync(profilePath))
-            return callback(null, `Unable to find profile to connect to remote-installer mongo at: ${profilePath}.`);
-        if (!fs.existsSync(dataPath))
-            return callback(null, `Unable to find custom data path to connect to remote-installer mongo at: ${dataPath}.`);
-
-        return strategyFunction(profilePath, dataPath, callback);
-    }
+	}
 };
 
 module.exports = serviceModule;
