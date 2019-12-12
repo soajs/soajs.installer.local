@@ -13,7 +13,7 @@ const logger = require("../utils/utils.js").getLogger();
 const serviceModule = {
 	
 	'install': (args, callback) => {
-		logger.debug(`SOAJS Remote Cloud Installer started ...`);
+		logger.info(`SOAJS Remote Cloud Installer started ...`);
 		if (args.length === 0) {
 			return callback("Please provide remote installer configuration... for more information PLease contact SOAJS @ https://www.soajs.org/contactUs");
 		}
@@ -31,6 +31,17 @@ const serviceModule = {
 					return callback("Unable parse remote installer configuration (might be permissions): " + args[0]);
 				}
 				
+				let cleanDataBefore = false;
+				if (args.length === 2) {
+					if (args[1] === "--clean") {
+						cleanDataBefore = true;
+					}
+					else {
+						args.shift();
+						return callback(null, `Unidentified input ${args.join(" ")}. Please use soajs remote-installer install %folder% [--clean].`);
+					}
+				}
+				
 				let VERSION_INFO = versionInfo.getVersionInfo();
 				if (!VERSION_INFO || !VERSION_INFO.services) {
 					return callback("Unable continue, missing installer versions information!");
@@ -38,6 +49,8 @@ const serviceModule = {
 				let dataPath = path.normalize(process.env.PWD + "/../soajs.installer.remote/data/provision/");
 				let options = {
 					"versions": VERSION_INFO,
+					
+					"cleanDataBefore": cleanDataBefore,
 					
 					"driverName": "kubernetes",
 					"dataPath": dataPath,

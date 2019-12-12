@@ -23,6 +23,11 @@ let lib = {
 			async.eachSeries(
 				records,
 				(e, cb) => {
+					
+					if (config.docManipulation && typeof config.docManipulation === 'function') {
+						config.docManipulation(e);
+					}
+					
 					let condition = {[condAnchor]: e[condAnchor]};
 					if (e[objId]) {
 						e[objId] = mongoConnection.ObjectId(e[objId]);
@@ -45,11 +50,9 @@ let lib = {
 							});
 						}
 					};
-					if (config.docManipulation && typeof config.docManipulation === 'function') {
-						config.docManipulation(e);
-					}
+					
 					if (config.delete) {
-						mongoConnection.remove(colName, condition, (error) => {
+						mongoConnection.deleteOne(colName, condition, (error) => {
 							if (error) {
 								console.log(colName, error);
 								return cb();
@@ -83,6 +86,11 @@ let lib = {
 			async.eachSeries(
 				records,
 				(e, cb) => {
+					
+					if (config.docManipulation && typeof config.docManipulation === 'function') {
+						config.docManipulation(e);
+					}
+					
 					let condition = {token: e.token};
 					
 					if (e._id) {
@@ -110,11 +118,8 @@ let lib = {
 						}
 					};
 					
-					if (config.docManipulation && typeof config.docManipulation === 'function') {
-						config.docManipulation(e);
-					}
 					if (config.delete) {
-						mongoConnection.remove("oauth_token", condition, (error) => {
+						mongoConnection.deleteOne("oauth_token", condition, (error) => {
 							if (error) {
 								console.log("oauth_token", error);
 								return cb();
@@ -147,6 +152,11 @@ let lib = {
 			async.eachSeries(
 				records,
 				(e, cb) => {
+					
+					if (config.docManipulation && typeof config.docManipulation === 'function') {
+						config.docManipulation(e);
+					}
+					
 					profile.name = e.tenant.code + "_urac";
 					let mongoConnection = new Mongo(profile);
 					let condition = {email: e.email};
@@ -172,11 +182,8 @@ let lib = {
 						}
 					};
 					
-					if (config.docManipulation && typeof config.docManipulation === 'function') {
-						config.docManipulation(e);
-					}
 					if (config.delete) {
-						mongoConnection.remove("users", condition, (error) => {
+						mongoConnection.deleteOne("users", condition, (error) => {
 							if (error) {
 								console.log("users", error);
 								return cb();
@@ -209,6 +216,11 @@ let lib = {
 			async.eachSeries(
 				records,
 				(e, cb) => {
+					
+					if (config.docManipulation && typeof config.docManipulation === 'function') {
+						config.docManipulation(e);
+					}
+					
 					profile.name = e.tenant.code + "_urac";
 					let mongoConnection = new Mongo(profile);
 					let condition = {code: e.code};
@@ -234,11 +246,8 @@ let lib = {
 						}
 					};
 					
-					if (config.docManipulation && typeof config.docManipulation === 'function') {
-						config.docManipulation(e);
-					}
 					if (config.delete) {
-						mongoConnection.remove("groups", condition, (error) => {
+						mongoConnection.deleteOne("groups", condition, (error) => {
 							if (error) {
 								console.log("groups", error);
 								return cb();
