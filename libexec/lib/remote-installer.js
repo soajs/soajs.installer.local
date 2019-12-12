@@ -59,7 +59,9 @@ const serviceModule = {
 					"mongo": userConfiguration.mongo,
 					"kubernetes": userConfiguration.kubernetes,
 					"nginx": userConfiguration.nginx,
-					"owner": userConfiguration.owner
+					"owner": userConfiguration.owner,
+					
+					"type": userConfiguration.type || "bin"
 				};
 				remote_installer.install(options, (error) => {
 					return callback(error, "SOAJS remote installer done!");
@@ -131,7 +133,9 @@ const serviceModule = {
 					"mongo": userConfiguration.mongo,
 					"kubernetes": userConfiguration.kubernetes,
 					"nginx": userConfiguration.nginx,
-					"owner": userConfiguration.owner
+					"owner": userConfiguration.owner,
+					
+					"type": userConfiguration.type || "bin"
 				};
 				
 				remote_installer.migrate(options, strategy, (error, response) => {
