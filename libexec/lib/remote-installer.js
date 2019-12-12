@@ -102,6 +102,18 @@ const serviceModule = {
 				} catch (e) {
 					return callback("Unable parse remote installer configuration (might be permissions): " + args[0]);
 				}
+				
+				let cleanDataBefore = false;
+				if (args.length === 2) {
+					if (args[1] === "--clean") {
+						cleanDataBefore = true;
+					}
+					else {
+						args.shift();
+						return callback(null, `Unidentified input ${args.join(" ")}. Please use soajs remote-installer install %folder% [--clean].`);
+					}
+				}
+				
 				let VERSION_INFO = versionInfo.getVersionInfo();
 				if (!VERSION_INFO || !VERSION_INFO.services) {
 					return callback("Unable continue, missing installer versions information!");
@@ -109,6 +121,8 @@ const serviceModule = {
 				let dataPath = path.normalize(process.env.PWD + "/../soajs.installer.remote/data/provision/");
 				let options = {
 					"versions": VERSION_INFO,
+					
+					"cleanDataBefore": cleanDataBefore,
 					
 					"driverName": "kubernetes",
 					"dataPath": dataPath,
