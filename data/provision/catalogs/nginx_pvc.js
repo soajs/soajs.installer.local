@@ -1,12 +1,12 @@
 'use strict';
 
 let doc = {
-	"_id": "5bed929029f0041bf64bf995",
-	"name": "Nginx Gateway BC",
+	"_id": "5deaa187be70f13a183a9c73",
+	"name": "Nginx with automated ssl as pvc",
 	"type": "server",
 	"subtype": "nginx",
-	"soajs": true,
-	"description": "This recipe allows you to deploy an nginx server with backward compatibilities",
+	"locked": true,
+	"description": "Deploy Nginx with automated https certificate. This requires a ReadWriteMany pvc with claim name as nfs-pvc",
 	"restriction": {
 		"deployment": [
 			"container"
@@ -58,6 +58,21 @@ let doc = {
 				}
 			],
 			"voluming": [
+				{
+					"docker": {},
+					"kubernetes": {
+						"volume": {
+							"name": "soajscert",
+							"persistentVolumeClaim": {
+								"claimName": "nfs-pvc"
+							}
+						},
+						"volumeMount": {
+							"mountPath": "/opt/soajs/certificates/",
+							"name": "soajscert"
+						}
+					}
+				}
 			],
 			"restartPolicy": {
 				"condition": "any",
@@ -75,29 +90,15 @@ let doc = {
 					"type": "computed",
 					"value": "$SOAJS_ENV"
 				},
-				"SOAJS_NX_DOMAIN": {
-					"type": "computed",
-					"value": "$SOAJS_NX_DOMAIN"
-				},
-				"SOAJS_NX_API_DOMAIN": {
-					"type": "computed",
-					"value": "$SOAJS_NX_API_DOMAIN"
-				},
-				"SOAJS_NX_CONTROLLER_NB": {
-					"type": "computed",
-					"value": "$SOAJS_NX_CONTROLLER_NB"
-				},
-				"SOAJS_NX_CONTROLLER_IP": {
-					"type": "computed",
-					"value": "$SOAJS_NX_CONTROLLER_IP_N"
-				},
-				"SOAJS_NX_CONTROLLER_PORT": {
-					"type": "computed",
-					"value": "$SOAJS_NX_CONTROLLER_PORT"
-				},
 				"SOAJS_NX_SITE_DOMAIN": {
 					"type": "computed",
 					"value": "$SOAJS_NX_SITE_DOMAIN"
+				},
+				"SOAJS_SSL_CONFIG": {
+					"type": "userInput",
+					"label": "SSL information",
+					"default": '{"email":"me@email.com" ,"redirect":false}',
+					"fieldMsg": "Add the SSL certificate email owner and set if you want to redirect http to https"
 				}
 			},
 			"settings": {

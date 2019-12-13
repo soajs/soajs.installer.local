@@ -1,12 +1,13 @@
 'use strict';
 
 let doc = {
-	"_id": "5de80bd55bf7b41dd3db0148",
-	"name": "Nginx SSL Gateway BC",
+	"_id": "5dea9f00be70f13a183a9c71",
+	"name": "SOAJS Console from bin with automated ssl as pvc",
 	"type": "server",
 	"subtype": "nginx",
 	"soajs": true,
-	"description": "This recipe allows you to deploy an nginx SSL server with backward compatibilities. This requires a ReadWriteMany pvc with claim name as nfs-pvc",
+	"locked": true,
+	"description": "Deploy SOAJS console UI from binary with automated https certificate. This requires a ReadWriteMany pvc with claim name as nfs-pvc",
 	"restriction": {
 		"deployment": [
 			"container"
@@ -16,21 +17,13 @@ let doc = {
 		"deployOptions": {
 			"image": {
 				"prefix": "soajsorg",
-				"name": "fe",
-				"tag": "3.x",
+				"name": "consoleui",
+				"tag": "2.x",
 				"pullPolicy": "Always",
 				"repositoryType": "public",
-				"override": false
+				"override": true
 			},
-			"sourceCode": {
-				"custom": {
-					"label": "Attach Custom UI",
-					"type": "static",
-					"repo": "",
-					"branch": "",
-					"required": false
-				}
-			},
+			"sourceCode": {},
 			"certificates": "none",
 			"readinessProbe": {
 				"httpGet": {
@@ -90,6 +83,12 @@ let doc = {
 					"type": "computed",
 					"value": "$SOAJS_ENV"
 				},
+				
+				"SOAJS_EXTKEY": {
+					"type": "computed",
+					"value": "$SOAJS_EXTKEY"
+				},
+				
 				"SOAJS_NX_DOMAIN": {
 					"type": "computed",
 					"value": "$SOAJS_NX_DOMAIN"
@@ -97,6 +96,10 @@ let doc = {
 				"SOAJS_NX_API_DOMAIN": {
 					"type": "computed",
 					"value": "$SOAJS_NX_API_DOMAIN"
+				},
+				"SOAJS_NX_SITE_DOMAIN": {
+					"type": "computed",
+					"value": "$SOAJS_NX_SITE_DOMAIN"
 				},
 				"SOAJS_NX_CONTROLLER_NB": {
 					"type": "computed",
@@ -110,13 +113,11 @@ let doc = {
 					"type": "computed",
 					"value": "$SOAJS_NX_CONTROLLER_PORT"
 				},
-				"SOAJS_NX_SITE_DOMAIN": {
-					"type": "computed",
-					"value": "$SOAJS_NX_SITE_DOMAIN"
-				},
 				"SOAJS_SSL_CONFIG": {
-					"type": "static",
-					"value": "{'email':'team@soajs.org'}",
+					"type": "userInput",
+					"label": "SSL information",
+					"default": '{"email":"me@email.com" ,"redirect":false}',
+					"fieldMsg": "Add the SSL certificate email owner and set if you want to redirect http to https"
 				}
 			},
 			"settings": {
@@ -129,7 +130,6 @@ let doc = {
 					],
 					"args": [
 						"-c",
-						"node index.js -T nginx -S deploy",
 						"node index.js -T nginx -S install",
 						"/opt/soajs/soajs.deployer/deployer/bin/nginx.sh"
 					]
@@ -140,5 +140,4 @@ let doc = {
 	"v": 1,
 	"ts": new Date().getTime()
 };
-
 module.exports = doc;

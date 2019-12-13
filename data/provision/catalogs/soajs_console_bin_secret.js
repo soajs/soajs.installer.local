@@ -2,11 +2,12 @@
 
 let doc = {
 	"_id": "5dea9e59be70f13a183a9c70",
-	"name": "Console UI SSL",
+	"name": "SOAJS Console from bin with manual ssl as secret",
 	"type": "server",
 	"subtype": "nginx",
 	"soajs": true,
-	"description": "This recipe allows you to deploy a SOAJS Console UI with SSL. This requires a ReadWriteMany pvc with claim name as nfs-pvc",
+	"locked": true,
+	"description": "Deploy SOAJS console UI from binary with manual https certificate as secret",
 	"restriction": {
 		"deployment": [
 			"container"
@@ -49,23 +50,7 @@ let doc = {
 					"preserveClientIP": true
 				}
 			],
-			"voluming": [
-				{
-					"docker": {},
-					"kubernetes": {
-						"volume": {
-							"name": "soajscert",
-							"persistentVolumeClaim": {
-								"claimName": "nfs-pvc"
-							}
-						},
-						"volumeMount": {
-							"mountPath": "/opt/soajs/certificates/",
-							"name": "soajscert"
-						}
-					}
-				}
-			],
+			"voluming": [],
 			"restartPolicy": {
 				"condition": "any",
 				"maxAttempts": 5
@@ -96,6 +81,10 @@ let doc = {
 					"type": "computed",
 					"value": "$SOAJS_NX_API_DOMAIN"
 				},
+				"SOAJS_NX_SITE_DOMAIN": {
+					"type": "computed",
+					"value": "$SOAJS_NX_SITE_DOMAIN"
+				},
 				"SOAJS_NX_CONTROLLER_NB": {
 					"type": "computed",
 					"value": "$SOAJS_NX_CONTROLLER_NB"
@@ -108,13 +97,16 @@ let doc = {
 					"type": "computed",
 					"value": "$SOAJS_NX_CONTROLLER_PORT"
 				},
-				"SOAJS_NX_SITE_DOMAIN": {
-					"type": "computed",
-					"value": "$SOAJS_NX_SITE_DOMAIN"
+				
+				"SOAJS_SSL_SECRET": {
+					"type": "static",
+					"value": "true"
 				},
 				"SOAJS_SSL_CONFIG": {
-					"type": "static",
-					"value": "{'email':'team@soajs.org'}",
+					"type": "userInput",
+					"label": "SSL information",
+					"default": '{"email":"me@email.com" ,"redirect":false}',
+					"fieldMsg": "Add the SSL certificate email owner and set if you want to redirect http to https"
 				}
 			},
 			"settings": {

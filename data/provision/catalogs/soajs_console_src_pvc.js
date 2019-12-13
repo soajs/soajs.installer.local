@@ -1,12 +1,13 @@
 'use strict';
 
 let doc = {
-	"_id": "5dea9f00be70f13a183a9c71",
-	"name": "Console UI source",
+	"_id": "5df3c2ec9e6b1d5201d84517",
+	"name": "SOAJS Console from src with automated ssl as pvc",
 	"type": "server",
 	"subtype": "nginx",
 	"soajs": true,
-	"description": "This recipe allows you to deploy a SOAJS Console UI  from source code",
+	"locked": true,
+	"description": "Deploy SOAJS console UI from source with automated https certificate. This requires a ReadWriteMany pvc with claim name as nfs-pvc",
 	"restriction": {
 		"deployment": [
 			"container"
@@ -16,8 +17,8 @@ let doc = {
 		"deployOptions": {
 			"image": {
 				"prefix": "soajsorg",
-				"name": "consoleui",
-				"tag": "2.x",
+				"name": "fe",
+				"tag": "3.x",
 				"pullPolicy": "Always",
 				"repositoryType": "public",
 				"override": true
@@ -57,7 +58,23 @@ let doc = {
 					"preserveClientIP": true
 				}
 			],
-			"voluming": [],
+			"voluming": [
+				{
+					"docker": {},
+					"kubernetes": {
+						"volume": {
+							"name": "soajscert",
+							"persistentVolumeClaim": {
+								"claimName": "nfs-pvc"
+							}
+						},
+						"volumeMount": {
+							"mountPath": "/opt/soajs/certificates/",
+							"name": "soajscert"
+						}
+					}
+				}
+			],
 			"restartPolicy": {
 				"condition": "any",
 				"maxAttempts": 5
@@ -88,6 +105,10 @@ let doc = {
 					"type": "computed",
 					"value": "$SOAJS_NX_API_DOMAIN"
 				},
+				"SOAJS_NX_SITE_DOMAIN": {
+					"type": "computed",
+					"value": "$SOAJS_NX_SITE_DOMAIN"
+				},
 				"SOAJS_NX_CONTROLLER_NB": {
 					"type": "computed",
 					"value": "$SOAJS_NX_CONTROLLER_NB"
@@ -100,9 +121,11 @@ let doc = {
 					"type": "computed",
 					"value": "$SOAJS_NX_CONTROLLER_PORT"
 				},
-				"SOAJS_NX_SITE_DOMAIN": {
-					"type": "computed",
-					"value": "$SOAJS_NX_SITE_DOMAIN"
+				"SOAJS_SSL_CONFIG": {
+					"type": "userInput",
+					"label": "SSL information",
+					"default": '{"email":"me@email.com" ,"redirect":false}',
+					"fieldMsg": "Add the SSL certificate email owner and set if you want to redirect http to https"
 				}
 			},
 			"settings": {
@@ -115,7 +138,6 @@ let doc = {
 					],
 					"args": [
 						"-c",
-						"node index.js -T nginx -S deploy",
 						"node index.js -T nginx -S install",
 						"/opt/soajs/soajs.deployer/deployer/bin/nginx.sh"
 					]

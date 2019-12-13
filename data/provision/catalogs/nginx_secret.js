@@ -1,12 +1,12 @@
 'use strict';
 
 let doc = {
-	"_id": "5bfd792ab72d8f49eaefe229",
-	"name": "Console UI",
+	"_id": "5deaa178be70f13a183a9c72",
+	"name": "Nginx with manual ssl as secret",
 	"type": "server",
 	"subtype": "nginx",
-	"soajs": true,
-	"description": "This recipe allows you to deploy a SOAJS Console UI",
+	"locked": true,
+	"description": "Deploy Nginx with manual https certificate as secret",
 	"restriction": {
 		"deployment": [
 			"container"
@@ -16,13 +16,21 @@ let doc = {
 		"deployOptions": {
 			"image": {
 				"prefix": "soajsorg",
-				"name": "consoleui",
-				"tag": "2.x",
+				"name": "fe",
+				"tag": "3.x",
 				"pullPolicy": "Always",
 				"repositoryType": "public",
-				"override": true
+				"override": false
 			},
-			"sourceCode": {},
+			"sourceCode": {
+				"custom": {
+					"label": "Attach Custom UI",
+					"type": "static",
+					"repo": "",
+					"branch": "",
+					"required": false
+				}
+			},
 			"certificates": "none",
 			"readinessProbe": {
 				"httpGet": {
@@ -49,7 +57,8 @@ let doc = {
 					"preserveClientIP": true
 				}
 			],
-			"voluming": [],
+			"voluming": [
+			],
 			"restartPolicy": {
 				"condition": "any",
 				"maxAttempts": 5
@@ -66,35 +75,20 @@ let doc = {
 					"type": "computed",
 					"value": "$SOAJS_ENV"
 				},
-				
-				"SOAJS_EXTKEY": {
-					"type": "computed",
-					"value": "$SOAJS_EXTKEY"
-				},
-				
-				"SOAJS_NX_DOMAIN": {
-					"type": "computed",
-					"value": "$SOAJS_NX_DOMAIN"
-				},
-				"SOAJS_NX_API_DOMAIN": {
-					"type": "computed",
-					"value": "$SOAJS_NX_API_DOMAIN"
-				},
-				"SOAJS_NX_CONTROLLER_NB": {
-					"type": "computed",
-					"value": "$SOAJS_NX_CONTROLLER_NB"
-				},
-				"SOAJS_NX_CONTROLLER_IP": {
-					"type": "computed",
-					"value": "$SOAJS_NX_CONTROLLER_IP_N"
-				},
-				"SOAJS_NX_CONTROLLER_PORT": {
-					"type": "computed",
-					"value": "$SOAJS_NX_CONTROLLER_PORT"
-				},
 				"SOAJS_NX_SITE_DOMAIN": {
 					"type": "computed",
 					"value": "$SOAJS_NX_SITE_DOMAIN"
+				},
+				
+				"SOAJS_SSL_SECRET": {
+					"type": "static",
+					"value": "true"
+				},
+				"SOAJS_SSL_CONFIG": {
+					"type": "userInput",
+					"label": "SSL information",
+					"default": '{"email":"me@email.com" ,"redirect":false}',
+					"fieldMsg": "Add the SSL certificate email owner and set if you want to redirect http to https"
 				}
 			},
 			"settings": {
@@ -107,6 +101,7 @@ let doc = {
 					],
 					"args": [
 						"-c",
+						"node index.js -T nginx -S deploy",
 						"node index.js -T nginx -S install",
 						"/opt/soajs/soajs.deployer/deployer/bin/nginx.sh"
 					]
@@ -117,4 +112,5 @@ let doc = {
 	"v": 1,
 	"ts": new Date().getTime()
 };
+
 module.exports = doc;
