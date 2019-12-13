@@ -28,10 +28,11 @@ let lib = {
 						config.docManipulation(e);
 					}
 					
-					let condition = {[condAnchor]: e[condAnchor]};
 					if (e[objId]) {
 						e[objId] = mongoConnection.ObjectId(e[objId]);
 					}
+					let condition = {[condAnchor]: e[condAnchor]};
+					
 					let update = () => {
 						if (mongoConnection.updateOne) {
 							e = {$set: e};
@@ -302,7 +303,7 @@ let custom = {
 					if (fs.existsSync(dataPath + "catalogs/")) {
 						let config = {
 							"colName": "catalogs",
-							"condAnchor": "name",
+							"condAnchor": "_id",
 							"objId": "_id"
 						};
 						if (templates.catalogs && typeof templates.catalogs === "function") {

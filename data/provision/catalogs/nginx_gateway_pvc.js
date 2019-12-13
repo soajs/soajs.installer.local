@@ -6,6 +6,7 @@ let doc = {
 	"type": "server",
 	"subtype": "nginx",
 	"soajs": true,
+	"locked": true,
 	"description": "Deploy Nginx in front of SOAJS Gateway with automated https certificate. This requires a ReadWriteMany pvc with claim name as nfs-pvc",
 	"restriction": {
 		"deployment": [

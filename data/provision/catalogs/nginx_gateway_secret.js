@@ -6,6 +6,7 @@ let doc = {
 	"type": "server",
 	"subtype": "nginx",
 	"soajs": true,
+	"locked": true,
 	"description": "Deploy Nginx in front of SOAJS Gateway with manual https certificate as secret",
 	"restriction": {
 		"deployment": [
