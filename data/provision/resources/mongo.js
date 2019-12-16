@@ -8,6 +8,6 @@ module.exports = {
 	"author": "owner",
 	"locked": true,
 	"plugged": true,
-	"shared": true,
+	"shared": false,
 	"config": "%clusters%"
 };
