@@ -2,8 +2,6 @@
 
 const path = require("path");
 const fs = require("fs");
-const spawn = require("child_process").spawn;
-const exec = require("child_process").exec;
 const versionInfo = require(path.normalize(process.env.PWD + "/../soajs.installer.versions/index.js"));
 const remote_installer = require(path.normalize(process.env.PWD + "/../soajs.installer.remote/libexec/index.js"));
 
