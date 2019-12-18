@@ -59,7 +59,7 @@ const serviceModule = {
 					"nginx": userConfiguration.nginx,
 					"owner": userConfiguration.owner,
 					
-					"deployment": userConfiguration.deployment || null
+					"deployment": userConfiguration.deployment || {}
 				};
 				remote_installer.install(options, (error) => {
 					return callback(error, "SOAJS remote installer done!");
@@ -133,7 +133,7 @@ const serviceModule = {
 					"nginx": userConfiguration.nginx,
 					"owner": userConfiguration.owner,
 					
-					"deployment": userConfiguration.deployment || null
+					"deployment": userConfiguration.deployment || {}
 				};
 				
 				remote_installer.migrate(options, strategy, (error, response) => {
