@@ -133,7 +133,7 @@ const serviceModule = {
 					"nginx": userConfiguration.nginx,
 					"owner": userConfiguration.owner,
 					
-					"type": userConfiguration.type || "bin"
+					"deployment": userConfiguration.deployment || null
 				};
 				
 				remote_installer.migrate(options, strategy, (error, response) => {
