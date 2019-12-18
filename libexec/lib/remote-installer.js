@@ -59,7 +59,7 @@ const serviceModule = {
 					"nginx": userConfiguration.nginx,
 					"owner": userConfiguration.owner,
 					
-					"type": userConfiguration.type || "bin"
+					"deployment": userConfiguration.deployment || null
 				};
 				remote_installer.install(options, (error) => {
 					return callback(error, "SOAJS remote installer done!");
@@ -78,7 +78,7 @@ const serviceModule = {
 		if (args.length === 0) {
 			return callback(null, "Missing migration strategy!");
 		}
-		let strategies =  require(path.normalize(process.env.PWD + "/../soajs.installer.remote/libexec/migrate/config.js"));
+		let strategies = require(path.normalize(process.env.PWD + "/../soajs.installer.remote/libexec/migrate/config.js"));
 		let strategy = args[0];
 		
 		if (strategies.indexOf(strategy) === -1) {
