@@ -438,6 +438,24 @@ let custom = {
 						return cb(null);
 					}
 				},
+				
+				function (cb) {
+					//check for products data
+					if (fs.existsSync(dataPath + "settings/")) {
+						let config = {
+							"colName": "settings",
+							"condAnchor": "type",
+							"objId": "_id"
+						};
+						if (templates.settings && typeof templates.settings === "function") {
+							config.docManipulation = templates.settings;
+						}
+						return lib.basic(config, dataPath + "settings/", mongoConnection, cb);
+					} else {
+						return cb(null);
+					}
+				},
+			
 				function (cb) {
 					//check for products data
 					if (fs.existsSync(dataPath + "templates/")) {
