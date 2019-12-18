@@ -124,20 +124,33 @@ const serviceModule = {
 				if (error) {
 					return callback(error);
 				}
-				remote_installer.getSettings(options, (error, response) => {
+				remote_installer.getSettings(options, (error, settings) => {
 					if (error) {
 						return callback(error);
 					}
-					let output = "\nSOAJS Remote Release Information:\n";
-					
-					output += "\n=======================\n";
-					output += "Your current installed release is: [" + response.releaseInfo.name + "] and patch [" + response.releaseInfo.patch + "]\n";
-					
-					output += "The microservices versions:\n";
-					
-					console.log(output);
-					
-					return callback();
+					remote_installer.getDeployment(options, (error, deployments) => {
+						if (error) {
+							return callback(error);
+						}
+						
+						let output = "\nSOAJS Remote Release Information:\n";
+						
+						output += "\n=======================\n";
+						output += "Your current installed release is: [" + settings.releaseInfo.name + "] and patch [" + settings.releaseInfo.patch + "]\n";
+						
+						output += "The microservices versions:\n";
+						
+						for (let i = 0; i < deployments.length; i++) {
+							output += "\t" + deployments[i].serviceName + ": " + deployments[i].image;
+							if (deployments[i].branch) {
+								output += " - " + deployments[i].branch;
+							}
+							output += "\n";
+						}
+						console.log(output);
+						
+						return callback();
+					});
 				});
 			});
 		});
