@@ -140,13 +140,50 @@ const serviceModule = {
 						
 						output += "The microservices versions:\n";
 						
-						for (let i = 0; i < deployments.length; i++) {
-							output += "\t" + deployments[i].serviceName + ": " + deployments[i].image;
-							if (deployments[i].branch) {
-								output += " - " + deployments[i].branch;
+						for (let i = 0; i < deployments.services.length; i++) {
+							output += "\t" + deployments.services[i].serviceName + ": " + deployments.services[i].image;
+							if (deployments.services[i].branch) {
+								output += " - " + deployments.services[i].branch;
 							}
 							output += "\n";
 						}
+						
+						output += "\n=======================\n";
+						output += "Updates:\n";
+						
+						let releaseInfo = versionInfo.getVersionInfo(settings.releaseInfo.name);
+						let latest = versionInfo.getLatest();
+						if (settings.releaseInfo.name === latest) {
+							output += "\tcurrently you are using the latest release.\n\n";
+							if (settings.releaseInfo.patch === releaseInfo.patch) {
+								//check the service sem version !!!!
+								if (deployments.info.style === "sem") {
+									
+									output += "\teverything is up-to-date, enjoy!\n";
+								} else {
+									output += "\ta SOAJS deployment of style [" + deployments.info.style + "] detected.\n";
+									output += "\teverything might be up-to-date, contact soajs for more information!\n";
+								}
+							} else {
+								if (releaseInfo.previousPatches.includes(settings.releaseInfo.patch)) {
+									output += "\tyou do not have the latest patch, the latest patch is: [" + releaseInfo.patch + "].\n";
+									if (releaseInfo.prerequisite && Array.isArray(releaseInfo.prerequisite)) {
+										for (let i = 0; i < releaseInfo.prerequisite.length; i++) {
+											let prerequisite = releaseInfo.prerequisite[i];
+											if (prerequisite.patch === releaseInfo.patch) {
+												if (prerequisite.migration) {
+													output += "\tthis patch has migrate(s) prerequisite: " + prerequisite.migration.join(" - ");
+												}
+											}
+										}
+									}
+								}
+							}
+						} else {
+							output += "\tcurrently you not are using the latest release. [" + latest + "] is the latest release.\n";
+							output += "\tplease contact soajs team for more information!\n";
+						}
+						
 						console.log(output);
 						
 						return callback();
