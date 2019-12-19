@@ -140,11 +140,37 @@ const serviceModule = {
 						
 						output += "The microservices versions:\n";
 						
+						let verOutput = "";
+						let verOk = true;
+						let verMightOk = false;
 						for (let i = 0; i < deployments.services.length; i++) {
 							output += "\t" + deployments.services[i].serviceName + ": " + deployments.services[i].image;
 							if (deployments.services[i].branch) {
 								output += " - " + deployments.services[i].branch;
 							}
+							verOutput += "\t" + deployments.services[i].serviceName;
+							if (settings.releaseInfo.services[deployments.services[i].serviceName]) {
+								let str = deployments.services[i].branch || deployments.services[i].image;
+								if (str.indexOf(":") !== -1) {
+									str = str.substr(str.indexOf(":") + 1);
+								} else if (str.indexOf("/v")) {
+									str = str.substr(str.indexOf("/v") + 2);
+								}
+								let ver = settings.releaseInfo.services[deployments.services[i].serviceName].semVer;
+								if (str.indexOf(".x") !== -1) {
+									ver = settings.releaseInfo.services[deployments.services[i].serviceName].ver;
+									verMightOk = true;
+								}
+								verOutput += " " + str + " - " + ver;
+								
+								if (str === ver) {
+									verOutput += " => up-to-date";
+								} else {
+									verOutput += " => NOT up-to-date!";
+									verOk = false;
+								}
+							}
+							verOutput += "\n";
 							output += "\n";
 						}
 						
@@ -157,12 +183,24 @@ const serviceModule = {
 							output += "\tcurrently you are using the latest release.\n\n";
 							if (settings.releaseInfo.patch === releaseInfo.patch) {
 								//check the service sem version !!!!
-								if (deployments.info.style === "sem") {
+								output += verOutput;
+								output += "\n";
+								if (verMightOk) {
+									if (verOk) {
+										output += "\teverything might be up-to-date\n";
+									} else {
+										output += "\tnot everything is up-to-date!\n";
+									}
 									
-									output += "\teverything is up-to-date, enjoy!\n";
-								} else {
-									output += "\ta SOAJS deployment of style [" + deployments.info.style + "] detected.\n";
+									output += "\ta SOAJS deployment of version style [major] detected for one or many service(s).\n";
 									output += "\teverything might be up-to-date, contact soajs for more information!\n";
+									
+								} else {
+									if (verOk) {
+										output += "\teverything is up-to-date, enjoy!\n";
+									} else {
+										output += "\tnot everything is up-to-date!\n";
+									}
 								}
 							} else {
 								if (releaseInfo.previousPatches.includes(settings.releaseInfo.patch)) {
