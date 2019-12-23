@@ -128,10 +128,12 @@ const serviceModule = {
 					if (error) {
 						return callback(error);
 					}
-					remote_installer.getDeployment(options, (error, deployments) => {
+					remote_installer.getInfo(options, (error, deployments) => {
 						if (error) {
 							return callback(error);
 						}
+						let releaseInfo = versionInfo.getVersionInfo(settings.releaseInfo.name);
+						let latest = versionInfo.getLatest();
 						
 						let output = "\nSOAJS Remote Release Information:\n";
 						
@@ -149,16 +151,16 @@ const serviceModule = {
 								output += " - " + deployments.services[i].branch;
 							}
 							verOutput += "\t" + deployments.services[i].serviceName;
-							if (settings.releaseInfo.services[deployments.services[i].serviceName]) {
+							if (releaseInfo.services[deployments.services[i].serviceName]) {
 								let str = deployments.services[i].branch || deployments.services[i].image;
 								if (str.indexOf(":") !== -1) {
 									str = str.substr(str.indexOf(":") + 1);
-								} else if (str.indexOf("/v")) {
+								} else if (str.indexOf("/v") !== -1) {
 									str = str.substr(str.indexOf("/v") + 2);
 								}
-								let ver = settings.releaseInfo.services[deployments.services[i].serviceName].semVer;
+								let ver = releaseInfo.services[deployments.services[i].serviceName].semVer;
 								if (str.indexOf(".x") !== -1) {
-									ver = settings.releaseInfo.services[deployments.services[i].serviceName].ver;
+									ver = releaseInfo.services[deployments.services[i].serviceName].ver;
 									verMightOk = true;
 								}
 								verOutput += " " + str + " - " + ver;
@@ -177,12 +179,9 @@ const serviceModule = {
 						output += "\n=======================\n";
 						output += "Updates:\n";
 						
-						let releaseInfo = versionInfo.getVersionInfo(settings.releaseInfo.name);
-						let latest = versionInfo.getLatest();
 						if (settings.releaseInfo.name === latest) {
 							output += "\tcurrently you are using the latest release.\n\n";
 							if (settings.releaseInfo.patch === releaseInfo.patch) {
-								//check the service sem version !!!!
 								output += verOutput;
 								output += "\n";
 								if (verMightOk) {
@@ -191,10 +190,7 @@ const serviceModule = {
 									} else {
 										output += "\tnot everything is up-to-date!\n";
 									}
-									
-									output += "\ta SOAJS deployment of version style [major] detected for one or many service(s).\n";
-									output += "\teverything might be up-to-date, contact soajs for more information!\n";
-									
+									output += "\ta SOAJS deployment of version style [major] detected for one or many service(s). contact soajs for more information!\n";
 								} else {
 									if (verOk) {
 										output += "\teverything is up-to-date, enjoy!\n";
@@ -226,6 +222,47 @@ const serviceModule = {
 						
 						return callback();
 					});
+				});
+			});
+		});
+	},
+	
+	/**
+	 * To update a service within the same release and patch
+	 * @param args
+	 * @param callback
+	 */
+	"update": (args, callback) => {
+		if (args.length !== 2) {
+			return callback(null, "remote-installer update needs 2 arguments [serviceName] [configuration]");
+		}
+		if (args.length === 0) {
+			return callback(null, "Missing service!");
+		}
+		let requestedService = args[0];
+		args.shift();
+		
+		lib.getUserConfiguration(args[0], (error, userConfiguration) => {
+			if (error) {
+				return callback(error);
+			}
+			let cleanDataBefore = false;
+			lib.getOptions(userConfiguration, cleanDataBefore, (error, options) => {
+				if (error) {
+					return callback(error);
+				}
+				if (!options.versions.services[requestedService]) {
+					return callback(`${requestedService} is not supported!`);
+				}
+				let rollback = {
+					"path": process.env.PWD + "/../etc/rollback"
+				};
+				remote_installer.updateService(options, requestedService, rollback, (error, done) => {
+					if (done) {
+						return callback(error, "Service [" + requestedService + "] updated");
+					} else {
+						return callback(error, "Service [" + requestedService + "] was not updated");
+					}
 				});
 			});
 		});
