@@ -155,8 +155,8 @@ const serviceModule = {
 								let str = deployments.services[i].branch || deployments.services[i].image;
 								if (str.indexOf(":") !== -1) {
 									str = str.substr(str.indexOf(":") + 1);
-								} else if (str.indexOf("/v") !== -1) {
-									str = str.substr(str.indexOf("/v") + 2);
+								} else if (str.indexOf("v") !== -1) {
+									str = str.substr(str.indexOf("v") + 1);
 								}
 								let ver = releaseInfo.services[deployments.services[i].serviceName].semVer;
 								if (str.indexOf(".x") !== -1) {
@@ -227,6 +227,29 @@ const serviceModule = {
 		});
 	},
 	
+	
+	"backup": (args, callback) => {
+		lib.getUserConfiguration(args[0], (error, userConfiguration) => {
+			if (error) {
+				return callback(error);
+			}
+			let cleanDataBefore = false;
+			lib.getOptions(userConfiguration, cleanDataBefore, (error, options) => {
+				if (error) {
+					return callback(error);
+				}
+				remote_installer.getInfo(options, (error, deployments) => {
+					if (error) {
+						return callback(error);
+					}
+					console.log(deployments);
+					console.log("Coming soon");
+					return callback();
+				});
+			});
+		});
+	},
+	
 	/**
 	 * To update a service within the same release and patch
 	 * @param args
@@ -273,7 +296,7 @@ const serviceModule = {
 	 * @param args
 	 * @param callback
 	 */
-	migrate: (args, callback) => {
+	"migrate": (args, callback) => {
 		if (args.length === 0) {
 			return callback(null, "Missing migration strategy!");
 		}
