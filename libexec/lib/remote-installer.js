@@ -1,5 +1,6 @@
 'use strict';
 
+const async = require('async');
 const path = require("path");
 const fs = require("fs");
 const versionInfo = require(path.normalize(process.env.PWD + "/../soajs.installer.versions/index.js"));
@@ -242,9 +243,31 @@ const serviceModule = {
 					if (error) {
 						return callback(error);
 					}
-					console.log(deployments);
-					console.log("Coming soon");
-					return callback();
+					
+					let backupID = new Date().getTime().toString();
+					
+					logger.info("The backup ID is: " + backupID);
+					
+					async.each(deployments.services, (oneService, cb) => {
+						
+						let requestedService = oneService.serviceName;
+						let backup = {
+							"path": process.env.PWD + "/../etc/backup/" + backupID + "/"
+						};
+						remote_installer.backupService(options, requestedService, backup, (error, done) => {
+							if (done) {
+								return cb();
+							}
+							return cb(error);
+						});
+					}, (error) => {
+						if (error) {
+							return callback(error);
+						} else {
+							return callback(error);
+							
+						}
+					});
 				});
 			});
 		});
