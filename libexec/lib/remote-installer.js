@@ -31,16 +31,16 @@ let lib = {
 		}
 		fs.stat(fileName, (error, stats) => {
 			if (error || !stats) {
-				return callback("Unable find remote installer configuration (might be permissions): " + fileName);
+				return callback("Unable to find remote installer configuration (might be permissions): " + fileName);
 			}
 			fs.readFile(fileName, (error, userConfiguration) => {
 				if (error || !userConfiguration) {
-					return callback("Unable read remote installer configuration (might be permissions): " + fileName);
+					return callback("Unable to read remote installer configuration (might be permissions): " + fileName);
 				}
 				try {
 					userConfiguration = JSON.parse(userConfiguration);
 				} catch (e) {
-					return callback("Unable parse remote installer configuration (might be permissions): " + fileName);
+					return callback("Unable to parse remote installer configuration (might be permissions): " + fileName);
 				}
 				return callback(null, userConfiguration);
 			});
@@ -70,6 +70,24 @@ let lib = {
 			"deployment": userConfiguration.deployment || {}
 		};
 		return callback(null, options);
+	},
+	
+	"restore": (options, filePath, callback) => {
+		fs.readFile(filePath + "service.txt", 'utf8', (error, oneService) => {
+			if (!error && oneService) {
+				fs.readFile(filePath + "deployment.txt", 'utf8', (error, oneDeployment) => {
+					if (!error && oneDeployment) {
+						remote_installer.restoreOne(options, oneService, oneDeployment, (error) => {
+							return callback(error);
+						});
+					} else {
+						return callback("Unable to read deployment from: " + filePath + "deployment.txt");
+					}
+				});
+			} else {
+				return callback("Unable to read service from: " + filePath + "service.txt");
+			}
+		});
 	}
 };
 
@@ -268,6 +286,71 @@ const serviceModule = {
 							
 						}
 					});
+				});
+			});
+		});
+	},
+	
+	
+	"restore": (args, callback) => {
+		if (args.length !== 3) {
+			return callback(null, "remote-installer update needs 3 arguments [backup || rollback] [ID] [configuration]");
+		}
+		if (args.length === 0) {
+			return callback(null, "Missing restore from what");
+		}
+		let fromWhat = args[0];
+		args.shift();
+		
+		let fromWhatAvailable = ["backup", "rollback"];
+		if (!fromWhatAvailable.includes(fromWhat)) {
+			return callback('Restore from what only supports the following: ' + fromWhatAvailable.join(", "));
+		}
+		
+		let fromID = args[0];
+		args.shift();
+		
+		lib.getUserConfiguration(args[0], (error, userConfiguration) => {
+			if (error) {
+				return callback(error);
+			}
+			let cleanDataBefore = false;
+			lib.getOptions(userConfiguration, cleanDataBefore, (error, options) => {
+				if (error) {
+					return callback(error);
+				}
+				let filePath = process.env.PWD + "/../etc/" + fromWhat + "/" + fromID + "/";
+				fs.stat(filePath, (error, stats) => {
+					if (error) {
+						return callback(error);
+					}
+					if (!stats) {
+						return callback('Unable to read from the folder: ' + filePath);
+					}
+					if (fromWhat === "rollback") {
+						lib.restore(options, filePath, (error) => {
+							return callback(error);
+						});
+					} else {
+						fs.readdir(filePath, (error, directories) => {
+							async.each(directories, (dir, cb) => {
+								fs.stat(filePath + dir, (error, stats) => {
+									if (!error && stats && stats.isDirectory()) {
+										let dirPath = filePath + dir + "/";
+										lib.restore(options, dirPath, (error) => {
+											return cb(error);
+										});
+									} else {
+										//skip files
+										logger.debug("skipping: " + filePath + dir);
+										return cb();
+									}
+								})
+							}, (error) => {
+								return callback(error);
+							});
+						});
+					}
 				});
 			});
 		});
