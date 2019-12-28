@@ -172,7 +172,7 @@ const serviceModule = {
 						
 						output += "The microservices versions:\n";
 						
-						let verOutput = "";
+						//let verOutput = "";
 						let verOk = true;
 						let verMightOk = false;
 						for (let i = 0; i < deployments.services.length; i++) {
@@ -180,7 +180,7 @@ const serviceModule = {
 							if (deployments.services[i].branch) {
 								output += " - " + deployments.services[i].branch;
 							}
-							verOutput += "\t" + deployments.services[i].serviceName;
+							//verOutput += "\t" + deployments.services[i].serviceName;
 							if (releaseInfo.services[deployments.services[i].serviceName]) {
 								let str = deployments.services[i].branch || deployments.services[i].image;
 								if (str.indexOf(":") !== -1) {
@@ -193,16 +193,15 @@ const serviceModule = {
 									ver = releaseInfo.services[deployments.services[i].serviceName].ver;
 									verMightOk = true;
 								}
-								verOutput += " " + str + " - " + ver;
+								//verOutput += " " + str;
 								
-								if (str === ver) {
-									verOutput += " => up-to-date";
-								} else {
-									verOutput += " => NOT up-to-date!";
+								if (str !== ver) {
+									//verOutput += " --> " + ver + " : NOT up-to-date!";
+									output += " --> " + ver + " : NOT up-to-date!";
 									verOk = false;
 								}
 							}
-							verOutput += "\n";
+							//verOutput += "\n";
 							output += "\n";
 						}
 						
@@ -215,8 +214,8 @@ const serviceModule = {
 						if (settings.releaseInfo.name === latest) {
 							output += "\tcurrently you are using the latest release.\n\n";
 							if (settings.releaseInfo.patch === VERSION_INFO.patch) {
-								output += verOutput;
-								output += "\n";
+								//output += verOutput;
+								//output += "\n";
 								if (verMightOk) {
 									if (verOk) {
 										output += "\teverything might be up-to-date\n";
@@ -267,7 +266,6 @@ const serviceModule = {
 		});
 	},
 	
-	
 	"backup": (args, callback) => {
 		lib.getUserConfiguration(args[0], (error, userConfiguration) => {
 			if (error) {
@@ -311,7 +309,6 @@ const serviceModule = {
 			});
 		});
 	},
-	
 	
 	"restore": (args, callback) => {
 		if (args.length !== 3) {
@@ -475,6 +472,35 @@ const serviceModule = {
 				remote_installer.migrate(options, strategy, (error, response) => {
 					return callback(error, response);
 				});
+			});
+		});
+	},
+	
+	"upgrade": (args, callback) => {
+		if (args.length !== 2) {
+			return callback(null, "remote-installer upgrade needs 2 arguments [patch || release] [configuration]");
+		}
+		if (args.length === 0) {
+			return callback(null, "Missing service!");
+		}
+		let what2upgrade = args[0];
+		args.shift();
+		//let whatAvailable = ["patch", "release"];
+		let whatAvailable = ["patch"];
+		if (!whatAvailable.includes(what2upgrade)) {
+			return callback('upgrade only supports the following: ' + whatAvailable.join(", "));
+		}
+		lib.getUserConfiguration(args[0], (error, userConfiguration) => {
+			if (error) {
+				return callback(error);
+			}
+			let cleanDataBefore = false;
+			lib.getOptions(userConfiguration, cleanDataBefore, (error, options) => {
+				if (error) {
+					return callback(error);
+				}
+				
+				return callback(null, "Coming soon!");
 			});
 		});
 	}

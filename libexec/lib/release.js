@@ -28,11 +28,12 @@ let ifNotSudo = (callback) => {
 };
 
 let getmsVersion = (cb) => {
-	let VERSION_INFO = versionInfo.getVersionInfo(installerConfig.version);
+	let VERSION_INFO = versionInfo.getVersionInfo(installerConfig.version, installerConfig.patch);
 	if (!VERSION_INFO || !VERSION_INFO.services) {
 		return cb("Unable to get release information for the installed version [" + installerConfig.version + " " + installerConfig.patch + "]");
 	}
 	let msVersions = [];
+	let up2date = true;
 	async.eachOfSeries(VERSION_INFO.services, (oneServiceInfo, oneService, mCb) => {
 		let oneRepo = oneServiceInfo.repo;
 		let packageJSONPath = installerConfig.workingDirectory + "/node_modules/" + oneRepo + "/package.json";
@@ -41,7 +42,12 @@ let getmsVersion = (cb) => {
 				return mCb();
 			} else {
 				let packageJSON = require(packageJSONPath);
-				msVersions.push(oneService + " " + packageJSON.version);
+				if (VERSION_INFO.services[oneService].semVer === packageJSON.version) {
+					msVersions.push(oneService + " " + packageJSON.version);
+				} else {
+					up2date = false;
+					msVersions.push(oneService + " " + packageJSON.version + " --> "+ VERSION_INFO.services[oneService].semVer + " : NOT up-to-date!");
+				}
 				return mCb();
 			}
 		});
@@ -49,7 +55,7 @@ let getmsVersion = (cb) => {
 		if (error) {
 			return cb(error);
 		}
-		return cb(null, msVersions);
+		return cb(null, msVersions, up2date);
 	});
 	
 };
@@ -73,7 +79,7 @@ const servicesModule = {
 		output += "Your current installed release is: [" + releaseInfo.current.version + "] and patch [" + releaseInfo.current.patch + "]\n";
 		
 		output += "The microservices versions:\n";
-		getmsVersion((error, msVersions) => {
+		getmsVersion((error, msVersions, up2date) => {
 			
 			if (error) {
 				output += "\t Unable to  get versions information at this time.\n";
@@ -91,7 +97,11 @@ const servicesModule = {
 					output += "\tcurrently you are using the latest release.\n\n";
 					if (releaseInfo.current.patch) {
 						if (releaseInfo.current.patch === releaseInfo.release.patch) {
-							output += "\teverything is up-to-date, enjoy!\n";
+							if (up2date) {
+								output += "\teverything is up-to-date, enjoy!\n";
+							}else {
+								output += "\tnot everything is up-to-date!\n";
+							}
 						} else {
 							if (releaseInfo.release.previousPatches.includes(releaseInfo.current.patch)) {
 								output += "\tyou do not have the latest patch, the latest patch is: [" + releaseInfo.release.patch + "].\n";
