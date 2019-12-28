@@ -172,7 +172,6 @@ const serviceModule = {
 						
 						output += "The microservices versions:\n";
 						
-						//let verOutput = "";
 						let verOk = true;
 						let verMightOk = false;
 						for (let i = 0; i < deployments.services.length; i++) {
@@ -180,7 +179,6 @@ const serviceModule = {
 							if (deployments.services[i].branch) {
 								output += " - " + deployments.services[i].branch;
 							}
-							//verOutput += "\t" + deployments.services[i].serviceName;
 							if (releaseInfo.services[deployments.services[i].serviceName]) {
 								let str = deployments.services[i].branch || deployments.services[i].image;
 								if (str.indexOf(":") !== -1) {
@@ -193,15 +191,12 @@ const serviceModule = {
 									ver = releaseInfo.services[deployments.services[i].serviceName].ver;
 									verMightOk = true;
 								}
-								//verOutput += " " + str;
 								
 								if (str !== ver) {
-									//verOutput += " --> " + ver + " : NOT up-to-date!";
 									output += " --> " + ver + " : NOT up-to-date!";
 									verOk = false;
 								}
 							}
-							//verOutput += "\n";
 							output += "\n";
 						}
 						
@@ -214,8 +209,6 @@ const serviceModule = {
 						if (settings.releaseInfo.name === latest) {
 							output += "\tcurrently you are using the latest release.\n\n";
 							if (settings.releaseInfo.patch === VERSION_INFO.patch) {
-								//output += verOutput;
-								//output += "\n";
 								if (verMightOk) {
 									if (verOk) {
 										output += "\teverything might be up-to-date\n";
