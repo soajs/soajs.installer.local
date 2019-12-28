@@ -28,9 +28,9 @@ let ifNotSudo = (callback) => {
 };
 
 let getmsVersion = (cb) => {
-	let VERSION_INFO = versionInfo.getVersionInfo();
+	let VERSION_INFO = versionInfo.getVersionInfo(installerConfig.version);
 	if (!VERSION_INFO || !VERSION_INFO.services) {
-		return cb("Unable to get release information for the installed version [" + getInstalledVersion() + "]");
+		return cb("Unable to get release information for the installed version [" + installerConfig.version + " " + installerConfig.patch + "]");
 	}
 	let msVersions = [];
 	async.eachOfSeries(VERSION_INFO.services, (oneServiceInfo, oneService, mCb) => {
@@ -100,8 +100,15 @@ const servicesModule = {
 									for (let i = 0; i < releaseInfo.release.prerequisite.length; i++) {
 										let prerequisite = releaseInfo.release.prerequisite[i];
 										if (prerequisite.patch === releaseInfo.release.patch) {
-											if (prerequisite.migration) {
-												output += "\tthis patch has migrate(s) prerequisite: \n\t\t sudo soajs mongo migrate "+prerequisite.migration.join(" \n\t\t sudo soajs mongo migrate ")+"\n";
+											if (prerequisite.migration && Array.isArray(prerequisite.migration) && prerequisite.migration.length > 0) {
+												output += "\tthis patch has migrate(s) prerequisite: \n\t\t sudo soajs mongo migrate " + prerequisite.migration.join(" \n\t\t sudo soajs mongo migrate ") + "\n";
+											}
+											if (prerequisite.older) {
+												for (let i = 0; i < prerequisite.older.length; i++) {
+													if (prerequisite.older[i].patches.includes(releaseInfo.current.patch)) {
+														output += "\tyour current patch has more migrate(s) prerequisite: \n\t\t sudo soajs mongo migrate " + prerequisite.older[i].migration.join(" \n\t\t sudo soajs mongo migrate ") + "\n";
+													}
+												}
 											}
 										}
 									}

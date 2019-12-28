@@ -151,7 +151,18 @@ const serviceModule = {
 						if (error) {
 							return callback(error);
 						}
-						let releaseInfo = versionInfo.getVersionInfo(settings.releaseInfo.name);
+						
+						if (!settings || !settings.releaseInfo) {
+							return callback("Contact SOAJS Team, something is wrong with the installed version, missing settings");
+						}
+						
+						//NOTE: you can only compare within the same patch and release
+						let releaseInfo = versionInfo.getVersionInfo(settings.releaseInfo.name, settings.releaseInfo.patch);
+						
+						if (!releaseInfo || !releaseInfo.services) {
+							return callback("Contact SOAJS Team, something is wrong with the installed version, missing services");
+						}
+						
 						let latest = versionInfo.getLatest();
 						
 						let output = "\nSOAJS Remote Release Information:\n";
@@ -195,12 +206,15 @@ const serviceModule = {
 							output += "\n";
 						}
 						
+						//NOTE: get version info only for the release
+						let VERSION_INFO = versionInfo.getVersionInfo(settings.releaseInfo.name);
+						
 						output += "\n=======================\n";
 						output += "Updates:\n";
 						
 						if (settings.releaseInfo.name === latest) {
 							output += "\tcurrently you are using the latest release.\n\n";
-							if (settings.releaseInfo.patch === releaseInfo.patch) {
+							if (settings.releaseInfo.patch === VERSION_INFO.patch) {
 								output += verOutput;
 								output += "\n";
 								if (verMightOk) {
@@ -218,14 +232,21 @@ const serviceModule = {
 									}
 								}
 							} else {
-								if (releaseInfo.previousPatches.includes(settings.releaseInfo.patch)) {
-									output += "\tyou do not have the latest patch, the latest patch is: [" + releaseInfo.patch + "].\n";
-									if (releaseInfo.prerequisite && Array.isArray(releaseInfo.prerequisite)) {
-										for (let i = 0; i < releaseInfo.prerequisite.length; i++) {
-											let prerequisite = releaseInfo.prerequisite[i];
-											if (prerequisite.patch === releaseInfo.patch) {
-												if (prerequisite.migration) {
+								if (VERSION_INFO.previousPatches.includes(settings.releaseInfo.patch)) {
+									output += "\tyou do not have the latest patch, the latest patch is: [" + VERSION_INFO.patch + "].\n";
+									if (VERSION_INFO.prerequisite && Array.isArray(VERSION_INFO.prerequisite)) {
+										for (let i = 0; i < VERSION_INFO.prerequisite.length; i++) {
+											let prerequisite = VERSION_INFO.prerequisite[i];
+											if (prerequisite.patch === VERSION_INFO.patch) {
+												if (prerequisite.migration && Array.isArray(prerequisite.migration) && prerequisite.migration.length > 0) {
 													output += "\tthis patch has migrate(s) prerequisite: " + prerequisite.migration.join(" - ");
+												}
+												if (prerequisite.older) {
+													for (let i = 0; i < prerequisite.older.length; i++) {
+														if (prerequisite.older[i].patches.includes(settings.releaseInfo.patch)) {
+															output += "\tyour current patch has more migrate(s) prerequisite: " + prerequisite.older[i].migration.join(" - ");
+														}
+													}
 												}
 											}
 										}
@@ -380,18 +401,36 @@ const serviceModule = {
 				if (error) {
 					return callback(error);
 				}
-				if (!options.versions.services[requestedService]) {
-					return callback(`${requestedService} is not supported!`);
-				}
-				let rollback = {
-					"path": process.env.PWD + "/../etc/rollback"
-				};
-				remote_installer.updateService(options, requestedService, rollback, (error, done) => {
-					if (done) {
-						return callback(error, "Service [" + requestedService + "] updated");
-					} else {
-						return callback(error, "Service [" + requestedService + "] was not updated");
+				
+				remote_installer.getSettings(options, (error, settings) => {
+					if (error) {
+						return callback(error);
 					}
+					
+					if (!settings || !settings.releaseInfo) {
+						return callback("COntact SOAJS Team, something is wrong with the installed version, missing settings");
+					}
+					
+					//NOTE: you can only update within the same patch and release
+					let VERSION_INFO = versionInfo.getVersionInfo(settings.releaseInfo.name, settings.releaseInfo.patch);
+					if (!VERSION_INFO || !VERSION_INFO.services) {
+						return callback("COntact SOAJS Team, something is wrong with the installed version, missing services");
+					}
+					options.versions = VERSION_INFO;
+					
+					if (!options.versions.services[requestedService]) {
+						return callback(`${requestedService} is not supported!`);
+					}
+					let rollback = {
+						"path": process.env.PWD + "/../etc/rollback"
+					};
+					remote_installer.updateService(options, requestedService, rollback, (error, done) => {
+						if (done) {
+							return callback(error, "Service [" + requestedService + "] updated");
+						} else {
+							return callback(error, "Service [" + requestedService + "] was not updated");
+						}
+					});
 				});
 			});
 		});
