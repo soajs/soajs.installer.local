@@ -77,6 +77,12 @@ let lib = {
 			if (!error && oneService) {
 				fs.readFile(filePath + "deployment.txt", 'utf8', (error, oneDeployment) => {
 					if (!error && oneDeployment) {
+						try {
+							oneService = JSON.parse(oneService);
+							oneDeployment = JSON.parse(oneDeployment);
+						} catch (e) {
+							return callback(e);
+						}
 						remote_installer.restoreOne(options, oneService, oneDeployment, (error) => {
 							return callback(error);
 						});
