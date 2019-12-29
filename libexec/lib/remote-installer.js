@@ -83,8 +83,8 @@ let lib = {
 						} catch (e) {
 							return callback(e);
 						}
-						remote_installer.restoreOne(options, oneService, oneDeployment, (error) => {
-							return callback(error);
+						remote_installer.restoreOne(options, oneService, oneDeployment, (error, done) => {
+							return callback(error, done);
 						});
 					} else {
 						return callback("Unable to read deployment from: " + filePath + "deployment.txt");
@@ -345,7 +345,10 @@ const serviceModule = {
 						return callback('Unable to read from the folder: ' + filePath);
 					}
 					if (fromWhat === "rollback") {
-						lib.restore(options, filePath, (error) => {
+						lib.restore(options, filePath, (error, done) => {
+							if (done) {
+								logger.info("Restoring from ID [" + fromID + "] done");
+							}
 							return callback(error);
 						});
 					} else {
@@ -354,7 +357,10 @@ const serviceModule = {
 								fs.stat(filePath + dir, (error, stats) => {
 									if (!error && stats && stats.isDirectory()) {
 										let dirPath = filePath + dir + "/";
-										lib.restore(options, dirPath, (error) => {
+										lib.restore(options, dirPath, (error, done) => {
+											if (done) {
+												logger.info("Restoring from ID [" + fromID + "] and service [" + dir + "] done");
+											}
 											return cb(error);
 										});
 									} else {
@@ -404,13 +410,13 @@ const serviceModule = {
 					}
 					
 					if (!settings || !settings.releaseInfo) {
-						return callback("COntact SOAJS Team, something is wrong with the installed version, missing settings");
+						return callback("Contact SOAJS Team, something is wrong with the installed version, missing settings");
 					}
 					
 					//NOTE: you can only update within the same patch and release
 					let VERSION_INFO = versionInfo.getVersionInfo(settings.releaseInfo.name, settings.releaseInfo.patch);
 					if (!VERSION_INFO || !VERSION_INFO.services) {
-						return callback("COntact SOAJS Team, something is wrong with the installed version, missing services");
+						return callback("Contact SOAJS Team, something is wrong with the installed version, missing services");
 					}
 					options.versions = VERSION_INFO;
 					
