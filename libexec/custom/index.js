@@ -270,6 +270,53 @@ let lib = {
 };
 
 let custom = {
+	"runFor": {
+		"catalogs": (profile, dataPath, cleanDataBefore, templates, callback) => {
+			if (!templates) {
+				templates = {};
+			}
+			if (fs.existsSync(dataPath + "catalogs/")) {
+				let mongoConnection = new Mongo(profile);
+				let config = {
+					"colName": "catalogs",
+					"condAnchor": "_id",
+					"objId": "_id"
+				};
+				if (templates.catalogs && typeof templates.catalogs === "function") {
+					config.docManipulation = templates.catalogs;
+				}
+				return lib.basic(config, dataPath + "catalogs/", mongoConnection, () => {
+					mongoConnection.closeDb();
+					return callback(null);
+				});
+			} else {
+				return callback(null);
+			}
+		},
+		
+		"settings": (profile, dataPath, cleanDataBefore, templates, callback) => {
+			if (!templates) {
+				templates = {};
+			}
+			if (fs.existsSync(dataPath + "settings/")) {
+				let mongoConnection = new Mongo(profile);
+				let config = {
+					"colName": "settings",
+					"condAnchor": "type",
+					"objId": "_id"
+				};
+				if (templates.settings && typeof templates.settings === "function") {
+					config.docManipulation = templates.settings;
+				}
+				return lib.basic(config, dataPath + "settings/", mongoConnection, () => {
+					mongoConnection.closeDb();
+					return callback(null);
+				});
+			} else {
+				return callback(null);
+			}
+		}
+	},
 	"runPath": (profilePath, dataPath, cleanDataBefore, templates, callback) => {
 		if (!callback && templates) {
 			if (typeof templates === "function") {
@@ -455,7 +502,7 @@ let custom = {
 						return cb(null);
 					}
 				},
-			
+				
 				function (cb) {
 					//check for products data
 					if (fs.existsSync(dataPath + "templates/")) {

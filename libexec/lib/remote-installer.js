@@ -504,8 +504,52 @@ const serviceModule = {
 				if (error) {
 					return callback(error);
 				}
-				
-				return callback(null, "Coming soon!");
+				remote_installer.getSettings(options, (error, settings) => {
+					if (error) {
+						return callback(error);
+					}
+					
+					if (!settings || !settings.releaseInfo) {
+						return callback("Contact SOAJS Team, something is wrong with the installed version, missing settings");
+					}
+					
+					//NOTE: you can only upgrade to the latest patch
+					let VERSION_INFO = versionInfo.getVersionInfo(settings.releaseInfo.name);
+					if (!VERSION_INFO || !VERSION_INFO.services) {
+						return callback("Contact SOAJS Team, something is wrong with the installed version, missing services");
+					}
+					if (settings.releaseInfo.patch === VERSION_INFO.patch) {
+						return callback(null, "You Already have the latest patch of this release [" + settings.releaseInfo.name + " " + settings.releaseInfo.patch + "]");
+					} else {
+						options.versions = VERSION_INFO;
+						if (VERSION_INFO.previousPatches.includes(settings.releaseInfo.patch)) {
+							logger.info("A newer patch is available for this release [" + VERSION_INFO.name + " " + VERSION_INFO.patch + "]");
+							
+							const rl = readline.createInterface({
+								input: process.stdin,
+								output: process.stdout
+							});
+							rl.question('You are about to install the new patch, did you backup! are you sure you want to continue? [Y/N]', (answer) => {
+								rl.close();
+								if (answer === "Y" || answer === "y") {
+									
+									//return callback(error, "Coming soon");
+									
+									remote_installer.upgrade(options, (error) => {
+										return callback(error, "SOAJS remote upgrade done!");
+									});
+									
+								} else {
+									logger.info(`Patch upgrade terminating ...`);
+									return callback();
+								}
+								
+							});
+						} else {
+							return callback("Contact SOAJS Team, something is wrong with the installed patch, missing from previous patches");
+						}
+					}
+				});
 			});
 		});
 	}
