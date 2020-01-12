@@ -192,11 +192,16 @@ const serviceModule = {
 						let verMightOk = false;
 						for (let i = 0; i < deployments.services.length; i++) {
 							output += "\t" + deployments.services[i].serviceName + ": " + deployments.services[i].image;
-							if (deployments.services[i].branch) {
-								output += " - " + deployments.services[i].branch;
-							}
 							if (releaseInfo.services[deployments.services[i].serviceName]) {
-								let str = deployments.services[i].branch || deployments.services[i].image;
+								let branch = null;
+								if (deployments.services[i].branch) {
+									branch = deployments.services[i].branch;
+									branch = branch.replace(/__slash__/g, "/");
+									if (branch) {
+										output += " - " + branch;
+									}
+								}
+								let str = branch || deployments.services[i].image;
 								if (str.indexOf(":") !== -1) {
 									str = str.substr(str.indexOf(":") + 1);
 								} else if (str.indexOf("v") !== -1) {
