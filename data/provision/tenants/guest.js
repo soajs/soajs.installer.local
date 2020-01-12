@@ -35,9 +35,6 @@ let doc = {
 					],
 					"config": {
 						"dashboard": {
-							"oauth": {
-								"loginMode": "urac"
-							},
 							"commonFields": {
 								"mail": {
 									"from": 'me@localhost.com',

@@ -42,7 +42,17 @@ let lib = {
 				} catch (e) {
 					return callback("Unable to parse remote installer configuration (might be permissions): " + fileName);
 				}
-				return callback(null, userConfiguration);
+				if (userConfiguration && userConfiguration.projectPath) {
+					fs.stat(userConfiguration.projectPath, (error, stats) => {
+						if (error || !stats || !stats.isDirectory()) {
+							return callback("The provided projectPath is not valid (must be a valid folder): " + userConfiguration.projectPath);
+						}
+						return callback(null, userConfiguration);
+					});
+				} else {
+					userConfiguration.projectPath = process.env.PWD + "/../etc/";
+					return callback(null, userConfiguration);
+				}
 			});
 		});
 	},
@@ -288,7 +298,7 @@ const serviceModule = {
 						
 						let requestedService = oneService.serviceName;
 						let backup = {
-							"path": process.env.PWD + "/../etc/backup/" + backupID + "/"
+							"path": userConfiguration.projectPath + "backup/" + backupID + "/"
 						};
 						remote_installer.backupService(options, requestedService, backup, (error, done) => {
 							if (done) {
@@ -336,7 +346,7 @@ const serviceModule = {
 				if (error) {
 					return callback(error);
 				}
-				let filePath = process.env.PWD + "/../etc/" + fromWhat + "/" + fromID + "/";
+				let filePath = userConfiguration.projectPath + fromWhat + "/" + fromID + "/";
 				fs.stat(filePath, (error, stats) => {
 					if (error) {
 						return callback(error);
@@ -424,7 +434,7 @@ const serviceModule = {
 						return callback(`${requestedService} is not supported!`);
 					}
 					let rollback = {
-						"path": process.env.PWD + "/../etc/rollback"
+						"path": userConfiguration.projectPath + "rollback"
 					};
 					remote_installer.updateService(options, requestedService, rollback, (error, done) => {
 						if (done) {
