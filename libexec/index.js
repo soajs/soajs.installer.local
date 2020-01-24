@@ -12,7 +12,15 @@ process.env.SOAJS_INSTALLER_LOCATION = path.normalize(process.env.PWD + "/../");
 //check soajs.installer binary version
 let binaryVer = "4.1.0";
 const packagejson = require(path.normalize(process.env.PWD + "/../package.json"));
+const local_packagejson = require(process.env.PWD + "/../soajs.installer.local/package.json");
+const remote_packagejson = require(process.env.PWD + "/../soajs.installer.remote/package.json");
+const versions_packagejson = require(process.env.PWD + "/../soajs.installer.versions/package.json");
+
 let installerBinVersion = packagejson.version;
+let installerLocalVersion = local_packagejson.version;
+let installerRemoteVersion = remote_packagejson.version;
+let installerReleaseVersion = versions_packagejson.version;
+
 if (semver.lt(installerBinVersion, binaryVer)) {
 	logger.error(`Installer binary is outdated at least version [${binaryVer}] of soajs.installer must be installed.`);
 	logger.info("To learn how to upgrade installer binary, check out section 1 [installer binary update] at this link:");
@@ -20,8 +28,6 @@ if (semver.lt(installerBinVersion, binaryVer)) {
 	process.exit();
 }
 let localVer = "3.0.12";
-const local_packagejson = require("../package.json");
-let installerLocalVersion = local_packagejson.version;
 if (semver.lt(installerLocalVersion, localVer)) {
 	logger.error(`Installer code is outdated at least version [${localVer}] of soajs.installer.local must be installed.`);
 	logger.info("To learn how to upgrade installer code, check out section 2 [installer code update] at this link:");
