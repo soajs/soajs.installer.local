@@ -18,8 +18,6 @@ const versions_packagejson = require(process.env.PWD + "/../soajs.installer.vers
 
 let installerBinVersion = packagejson.version;
 let installerLocalVersion = local_packagejson.version;
-let installerRemoteVersion = remote_packagejson.version;
-let installerReleaseVersion = versions_packagejson.version;
 
 if (semver.lt(installerBinVersion, binaryVer)) {
 	logger.error(`Installer binary is outdated at least version [${binaryVer}] of soajs.installer must be installed.`);
