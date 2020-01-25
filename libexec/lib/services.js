@@ -1,4 +1,12 @@
-'use strict';
+"use strict";
+
+/**
+ * @license
+ * Copyright SOAJS All Rights Reserved.
+ *
+ * Use of this source code is governed by an Apache license that can be
+ * found in the LICENSE file at the root of this repository
+ */
 
 const path = require("path");
 const async = require("async");
@@ -11,15 +19,6 @@ const serviceModule = require("./service");
 const mongoModule = require("./mongo");
 
 const versionInfo = require(path.normalize(process.env.PWD + "/../soajs.installer.versions/index.js"));
-
-/*
-const SOAJS_RMS = {
-	'gateway': "soajs.controller",
-	'urac': 'soajs.urac',
-	'oauth': 'soajs.oauth',
-	'multitenant': "soajs.multitenant"
-};
-*/
 
 function getInstalledVersion() {
 	if (installerConfig && installerConfig.version) {

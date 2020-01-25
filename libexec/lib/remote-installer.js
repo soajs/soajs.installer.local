@@ -1,4 +1,12 @@
-'use strict';
+"use strict";
+
+/**
+ * @license
+ * Copyright SOAJS All Rights Reserved.
+ *
+ * Use of this source code is governed by an Apache license that can be
+ * found in the LICENSE file at the root of this repository
+ */
 
 const async = require('async');
 const path = require("path");
@@ -6,6 +14,7 @@ const fs = require("fs");
 const versionInfo = require(path.normalize(process.env.PWD + "/../soajs.installer.versions/index.js"));
 const remote_installer = require(path.normalize(process.env.PWD + "/../soajs.installer.remote/libexec/index.js"));
 
+const installerVersionsInfo = require("./installerVersions.js");
 
 const packagejson = require("../../../package.json");
 const local_packagejson = require("../../package.json");
@@ -150,114 +159,116 @@ const serviceModule = {
 	},
 	
 	"info": (args, callback) => {
-		lib.getUserConfiguration(args[0], (error, userConfiguration) => {
-			if (error) {
-				return callback(error);
-			}
-			let cleanDataBefore = false;
-			lib.getOptions(userConfiguration, cleanDataBefore, (error, options) => {
+		installerVersionsInfo(() => {
+			lib.getUserConfiguration(args[0], (error, userConfiguration) => {
 				if (error) {
 					return callback(error);
 				}
-				remote_installer.getSettings(options, (error, settings) => {
+				let cleanDataBefore = false;
+				lib.getOptions(userConfiguration, cleanDataBefore, (error, options) => {
 					if (error) {
 						return callback(error);
 					}
-					remote_installer.getInfo(options, (error, deployments) => {
+					remote_installer.getSettings(options, (error, settings) => {
 						if (error) {
 							return callback(error);
 						}
-						
-						if (!settings || !settings.releaseInfo) {
-							return callback("Contact SOAJS Team, something is wrong with the installed version, missing settings");
-						}
-						
-						//NOTE: you can only compare within the same patch and release
-						let releaseInfo = versionInfo.getVersionInfo(settings.releaseInfo.name, settings.releaseInfo.patch);
-						
-						if (!releaseInfo || !releaseInfo.services) {
-							return callback("Contact SOAJS Team, something is wrong with the installed version, missing services");
-						}
-						
-						let latest = versionInfo.getLatest();
-						
-						let output = "\nSOAJS Remote Release Information:\n";
-						
-						output += "\n=======================\n";
-						output += "Your current installed release is: [" + settings.releaseInfo.name + "] and patch [" + settings.releaseInfo.patch + "]\n";
-						
-						output += "The microservices versions:\n";
-						
-						let verOk = true;
-						let verMightOk = false;
-						for (let i = 0; i < deployments.services.length; i++) {
-							output += "\t" + deployments.services[i].serviceName + ": " + deployments.services[i].image;
-							if (releaseInfo.services[deployments.services[i].serviceName]) {
-								let branch = null;
-								if (deployments.services[i].branch) {
-									branch = deployments.services[i].branch;
-									branch = branch.replace(/__slash__/g, "/");
-									if (branch) {
-										output += " - " + branch;
-									}
-								}
-								let str = branch || deployments.services[i].image;
-								if (str.indexOf(":") !== -1) {
-									str = str.substr(str.indexOf(":") + 1);
-								} else if (str.indexOf("v") !== -1) {
-									str = str.substr(str.indexOf("v") + 1);
-								}
-								let ver = releaseInfo.services[deployments.services[i].serviceName].semVer;
-								if (str.indexOf(".x") !== -1) {
-									ver = releaseInfo.services[deployments.services[i].serviceName].ver;
-									verMightOk = true;
-								}
-								
-								if (str !== ver) {
-									output += " --> " + ver + " : NOT up-to-date!";
-									verOk = false;
-								}
+						remote_installer.getInfo(options, (error, deployments) => {
+							if (error) {
+								return callback(error);
 							}
-							output += "\n";
-						}
-						
-						//NOTE: get version info only for the release
-						let VERSION_INFO = versionInfo.getVersionInfo(settings.releaseInfo.name);
-						
-						output += "\n=======================\n";
-						output += "Updates:\n";
-						
-						if (settings.releaseInfo.name === latest) {
-							output += "\tcurrently you are using the latest release.\n\n";
-							if (settings.releaseInfo.patch === VERSION_INFO.patch) {
-								if (verMightOk) {
-									if (verOk) {
-										output += "\teverything might be up-to-date\n";
-									} else {
-										output += "\tnot everything is up-to-date!\n";
+							
+							if (!settings || !settings.releaseInfo) {
+								return callback("Contact SOAJS Team, something is wrong with the installed version, missing settings");
+							}
+							
+							//NOTE: you can only compare within the same patch and release
+							let releaseInfo = versionInfo.getVersionInfo(settings.releaseInfo.name, settings.releaseInfo.patch);
+							
+							if (!releaseInfo || !releaseInfo.services) {
+								return callback("Contact SOAJS Team, something is wrong with the installed version, missing services");
+							}
+							
+							let latest = versionInfo.getLatest();
+							
+							let output = "\nSOAJS Remote Release Information:\n";
+							
+							output += "\n=======================\n";
+							output += "Your current installed release is: [" + settings.releaseInfo.name + "] and patch [" + settings.releaseInfo.patch + "]\n";
+							
+							output += "The microservices versions:\n";
+							
+							let verOk = true;
+							let verMightOk = false;
+							for (let i = 0; i < deployments.services.length; i++) {
+								output += "\t" + deployments.services[i].serviceName + ": " + deployments.services[i].image;
+								if (releaseInfo.services[deployments.services[i].serviceName]) {
+									let branch = null;
+									if (deployments.services[i].branch) {
+										branch = deployments.services[i].branch;
+										branch = branch.replace(/__slash__/g, "/");
+										if (branch) {
+											output += " - " + branch;
+										}
 									}
-									output += "\ta SOAJS deployment of version style [major] detected for one or many service(s). contact soajs for more information!\n";
-								} else {
-									if (verOk) {
-										output += "\teverything is up-to-date, enjoy!\n";
-									} else {
-										output += "\tnot everything is up-to-date!\n";
+									let str = branch || deployments.services[i].image;
+									if (str.indexOf(":") !== -1) {
+										str = str.substr(str.indexOf(":") + 1);
+									} else if (str.indexOf("v") !== -1) {
+										str = str.substr(str.indexOf("v") + 1);
+									}
+									let ver = releaseInfo.services[deployments.services[i].serviceName].semVer;
+									if (str.indexOf(".x") !== -1) {
+										ver = releaseInfo.services[deployments.services[i].serviceName].ver;
+										verMightOk = true;
+									}
+									
+									if (str !== ver) {
+										output += " --> " + ver + " : NOT up-to-date!";
+										verOk = false;
 									}
 								}
-							} else {
-								if (VERSION_INFO.previousPatches.includes(settings.releaseInfo.patch)) {
-									output += "\tyou do not have the latest patch, the latest patch is: [" + VERSION_INFO.patch + "].\n";
-									if (VERSION_INFO.prerequisite && Array.isArray(VERSION_INFO.prerequisite)) {
-										for (let i = 0; i < VERSION_INFO.prerequisite.length; i++) {
-											let prerequisite = VERSION_INFO.prerequisite[i];
-											if (prerequisite.patch === VERSION_INFO.patch) {
-												if (prerequisite.migration && Array.isArray(prerequisite.migration) && prerequisite.migration.length > 0) {
-													output += "\tthis patch has migrate(s) prerequisite: " + prerequisite.migration.join(" - ");
-												}
-												if (prerequisite.older) {
-													for (let i = 0; i < prerequisite.older.length; i++) {
-														if (prerequisite.older[i].patches.includes(settings.releaseInfo.patch)) {
-															output += "\tyour current patch has more migrate(s) prerequisite: " + prerequisite.older[i].migration.join(" - ");
+								output += "\n";
+							}
+							
+							//NOTE: get version info only for the release
+							let VERSION_INFO = versionInfo.getVersionInfo(settings.releaseInfo.name);
+							
+							output += "\n=======================\n";
+							output += "Updates:\n";
+							
+							if (settings.releaseInfo.name === latest) {
+								output += "\tcurrently you are using the latest release.\n\n";
+								if (settings.releaseInfo.patch === VERSION_INFO.patch) {
+									if (verMightOk) {
+										if (verOk) {
+											output += "\teverything might be up-to-date\n";
+										} else {
+											output += "\tnot everything is up-to-date!\n";
+										}
+										output += "\ta SOAJS deployment of version style [major] detected for one or many service(s). contact soajs for more information!\n";
+									} else {
+										if (verOk) {
+											output += "\teverything is up-to-date, enjoy!\n";
+										} else {
+											output += "\tnot everything is up-to-date!\n";
+										}
+									}
+								} else {
+									if (VERSION_INFO.previousPatches.includes(settings.releaseInfo.patch)) {
+										output += "\tyou do not have the latest patch, the latest patch is: [" + VERSION_INFO.patch + "].\n";
+										if (VERSION_INFO.prerequisite && Array.isArray(VERSION_INFO.prerequisite)) {
+											for (let i = 0; i < VERSION_INFO.prerequisite.length; i++) {
+												let prerequisite = VERSION_INFO.prerequisite[i];
+												if (prerequisite.patch === VERSION_INFO.patch) {
+													if (prerequisite.migration && Array.isArray(prerequisite.migration) && prerequisite.migration.length > 0) {
+														output += "\tthis patch has migrate(s) prerequisite: " + prerequisite.migration.join(" - ");
+													}
+													if (prerequisite.older) {
+														for (let i = 0; i < prerequisite.older.length; i++) {
+															if (prerequisite.older[i].patches.includes(settings.releaseInfo.patch)) {
+																output += "\tyour current patch has more migrate(s) prerequisite: " + prerequisite.older[i].migration.join(" - ");
+															}
 														}
 													}
 												}
@@ -265,15 +276,15 @@ const serviceModule = {
 										}
 									}
 								}
+							} else {
+								output += "\tcurrently you not are using the latest release. [" + latest + "] is the latest release.\n";
+								output += "\tplease contact soajs team for more information!\n";
 							}
-						} else {
-							output += "\tcurrently you not are using the latest release. [" + latest + "] is the latest release.\n";
-							output += "\tplease contact soajs team for more information!\n";
-						}
-						
-						console.log(output);
-						
-						return callback();
+							
+							console.log(output);
+							
+							return callback();
+						});
 					});
 				});
 			});

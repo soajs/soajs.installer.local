@@ -1,4 +1,13 @@
-'use strict';
+"use strict";
+
+/**
+ * @license
+ * Copyright SOAJS All Rights Reserved.
+ *
+ * Use of this source code is governed by an Apache license that can be
+ * found in the LICENSE file at the root of this repository
+ */
+
 const path = require("path");
 const fs = require("fs");
 const spawn = require("child_process").spawn;
@@ -6,7 +15,6 @@ const exec = require("child_process").exec;
 const YAML = require("yamljs");
 const mkdirp = require("mkdirp");
 let Mongo = require("soajs").mongo;
-const async = require('async');
 const custom = require("../custom/index.js");
 let installerConfig = require(path.normalize(process.env.PWD + "/../etc/config.js"));
 
