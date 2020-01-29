@@ -160,7 +160,7 @@ let lib = {
 					
 					profile.name = e.tenant.code + "_urac";
 					let mongoConnection = new Mongo(profile);
-					let condition = {email: e.email};
+					let condition = {username: e.username};
 					if (e._id) {
 						e._id = mongoConnection.ObjectId(e._id);
 					}
@@ -280,7 +280,8 @@ let custom = {
 				let config = {
 					"colName": "catalogs",
 					"condAnchor": "_id",
-					"objId": "_id"
+					"objId": "_id",
+					"delete": cleanDataBefore
 				};
 				if (templates.catalogs && typeof templates.catalogs === "function") {
 					config.docManipulation = templates.catalogs;
@@ -303,7 +304,8 @@ let custom = {
 				let config = {
 					"colName": "settings",
 					"condAnchor": "type",
-					"objId": "_id"
+					"objId": "_id",
+					"delete": cleanDataBefore
 				};
 				if (templates.settings && typeof templates.settings === "function") {
 					config.docManipulation = templates.settings;
@@ -346,12 +348,13 @@ let custom = {
 		let mongoConnection = new Mongo(profile);
 		async.waterfall([
 				function (cb) {
-					//check for products data
+					//check for catalogs data
 					if (fs.existsSync(dataPath + "catalogs/")) {
 						let config = {
 							"colName": "catalogs",
 							"condAnchor": "_id",
-							"objId": "_id"
+							"objId": "_id",
+							"delete": cleanDataBefore
 						};
 						if (templates.catalogs && typeof templates.catalogs === "function") {
 							config.docManipulation = templates.catalogs;
@@ -403,7 +406,7 @@ let custom = {
 					}
 				},
 				function (cb) {
-					//check for environment data
+					//check for gitAccounts data
 					if (fs.existsSync(dataPath + "gitAccounts/")) {
 						let config = {
 							"colName": "git_accounts",
@@ -420,7 +423,7 @@ let custom = {
 					}
 				},
 				function (cb) {
-					//check for environment data
+					//check for infra data
 					if (fs.existsSync(dataPath + "infra/")) {
 						let config = {
 							"colName": "infra",
@@ -454,12 +457,13 @@ let custom = {
 					}
 				},
 				function (cb) {
-					//check for products data
+					//check for resources data
 					if (fs.existsSync(dataPath + "resources/")) {
 						let config = {
 							"colName": "resources",
 							"condAnchor": "name",
-							"objId": "_id"
+							"objId": "_id",
+							"delete": cleanDataBefore
 						};
 						if (templates.resources && typeof templates.resources === "function") {
 							config.docManipulation = templates.resources;
@@ -470,12 +474,13 @@ let custom = {
 					}
 				},
 				function (cb) {
-					//check for products data
+					//check for services data
 					if (fs.existsSync(dataPath + "services/")) {
 						let config = {
 							"colName": "services",
 							"condAnchor": "name",
-							"objId": "_id"
+							"objId": "_id",
+							"delete": cleanDataBefore
 						};
 						if (templates.services && typeof templates.services === "function") {
 							config.docManipulation = templates.services;
@@ -487,12 +492,13 @@ let custom = {
 				},
 				
 				function (cb) {
-					//check for products data
+					//check for settings data
 					if (fs.existsSync(dataPath + "settings/")) {
 						let config = {
 							"colName": "settings",
 							"condAnchor": "type",
-							"objId": "_id"
+							"objId": "_id",
+							"delete": cleanDataBefore
 						};
 						if (templates.settings && typeof templates.settings === "function") {
 							config.docManipulation = templates.settings;
@@ -504,12 +510,13 @@ let custom = {
 				},
 				
 				function (cb) {
-					//check for products data
+					//check for templates data
 					if (fs.existsSync(dataPath + "templates/")) {
 						let config = {
 							"colName": "templates",
 							"condAnchor": "name",
-							"objId": "_id"
+							"objId": "_id",
+							"delete": cleanDataBefore
 						};
 						if (templates.templates && typeof templates.templates === "function") {
 							config.docManipulation = templates.templates;
