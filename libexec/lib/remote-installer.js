@@ -578,6 +578,35 @@ const serviceModule = {
 				});
 			});
 		});
+	},
+	
+	"patch" : (args, callback) => {
+		if (args.length !== 2) {
+			return callback(null, "remote-installer update needs 2 arguments [serviceName] [configuration]");
+		}
+		if (args.length === 0) {
+			return callback(null, "Missing service!");
+		}
+		let requestedService = args[0];
+		args.shift();
+		
+		lib.getUserConfiguration(args[0], (error, userConfiguration) => {
+			if (error) {
+				return callback(error);
+			}
+			let cleanDataBefore = false;
+			lib.getOptions(userConfiguration, cleanDataBefore, (error, options) => {
+				if (error) {
+					return callback(error);
+				}
+				remote_installer.patch(options, requestedService, (error, done) => {
+					if (done){
+						logger.info("Patch done");
+					}
+					return callback(error);
+				});
+			});
+		});
 	}
 };
 
