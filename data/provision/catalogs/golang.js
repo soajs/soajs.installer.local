@@ -57,6 +57,10 @@ let doc = {
 					"type": "computed",
 					"value": "$SOAJS_DEPLOY_HA"
 				},
+				"SOAJS_DEPLOY_MANUAL" : {
+					"type" : "static",
+					"value" : "false"
+				},
 				"SOAJS_REGISTRY_API": {
 					"type": "computed",
 					"value": "$SOAJS_REGISTRY_API"
@@ -68,7 +72,7 @@ let doc = {
 			"cmd": {
 				"deploy": {
 					"command": [
-						"bash"
+						"sh"
 					],
 					"args": [
 						"-c",
