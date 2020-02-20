@@ -351,7 +351,7 @@ let mongoModule = {
 		return strategyFunction(profilePath, dataPath, callback);
 	},
 	
-	custom: (args, callback) => {
+	customOLD: (args, callback) => {
 		if (!Array.isArray(args) || args.length === 0) {
 			return callback(null, "Missing custom folder!");
 		}
@@ -386,7 +386,7 @@ let mongoModule = {
 		}
 	},
 	
-	generic: (args, callback) => {
+	custom: (args, callback) => {
 		if (!Array.isArray(args) || args.length === 0) {
 			return callback(null, "Missing custom folder!");
 		}
@@ -413,43 +413,45 @@ let mongoModule = {
 		}
 		if (fs.existsSync(dataPath)) {
 			let profilePath = path.normalize(process.env.PWD + "/../soajs.installer.local/data/soajs_profile.js");
+			
 			let soa_json = path.normalize(dataPath + "/soa.json");
 			fs.stat(soa_json, (error) => {
 				if (error) {
-					return callback(null, 'soa.json not found!');
-				}
-				let soa = require(soa_json);
-				let run_for_custom = () => {
-					if (soa && soa.custom) {
-						let customPath = path.normalize(dataPath + soa.custom + "/");
-						if (fs.existsSync(customPath)) {
-							custom.runGeneric(profilePath, customPath, cleanDataBefore, (error) => {
+					return custom.runPath(profilePath, dataPath, cleanDataBefore, null, callback);
+				} else {
+					let soa = require(soa_json);
+					let run_for_custom = () => {
+						if (soa && soa.custom) {
+							let customPath = path.normalize(dataPath + soa.custom + "/");
+							if (fs.existsSync(customPath)) {
+								custom.runGeneric(profilePath, customPath, cleanDataBefore, (error) => {
+									if (error) {
+										logger.error(error);
+									}
+									return callback(null, 'MongoDb Soajs Data generic done!');
+								});
+							} else {
+								return callback(null, `Custom folder [${customPath}] not found!`);
+							}
+						} else {
+							return callback(null, 'Nothing to run for! Make sure either base or custom are set.');
+						}
+					};
+					if (soa && soa.base) {
+						let basePath = path.normalize(dataPath + soa.base + "/");
+						if (fs.existsSync(basePath)) {
+							custom.runPath(profilePath, basePath, cleanDataBefore, null, (error) => {
 								if (error) {
 									logger.error(error);
 								}
-								return callback(null, 'MongoDb Soajs Data generic done!');
+								run_for_custom();
 							});
 						} else {
-							return callback(null, `Custom folder [${customPath}] not found!`);
+							return callback(null, `Base folder [${basePath}] not found!`);
 						}
 					} else {
-						return callback(null, 'Nothing to run for! Make sure either base or custom are set.');
+						run_for_custom();
 					}
-				};
-				if (soa && soa.base) {
-					let basePath = path.normalize(dataPath + soa.base + "/");
-					if (fs.existsSync(basePath)) {
-						custom.runPath(profilePath, basePath, cleanDataBefore, null, (error) => {
-							if (error) {
-								logger.error(error);
-							}
-							run_for_custom();
-						});
-					} else {
-						return callback(null, `Base folder [${basePath}] not found!`);
-					}
-				} else {
-					run_for_custom();
 				}
 			});
 		}

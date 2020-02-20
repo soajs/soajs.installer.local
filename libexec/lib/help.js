@@ -59,8 +59,7 @@ const helpModule = {
 				"clean": "Removes all the databases of SOAJS sample data from the MongoDB server",
 				"patch": "Imports the SOAJS sample data into MongoDB server and creates all the needed databases",
 				"migrate": "Migrate SOAJS data to update from an old version to a new version when needed",
-				"custom": "Import soajs ready data",
-				"generic": "Import soajs & custom data"
+				"custom": "Import soajs & custom ready data"
 			},
 			"service Operations": {
 				"start": "Start a SOAJS Service i.e. [gateway|urac|dashboard|oauth|multitenant]",
