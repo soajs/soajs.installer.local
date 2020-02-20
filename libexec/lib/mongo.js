@@ -18,6 +18,9 @@ let Mongo = require("soajs").mongo;
 const custom = require("../custom/index.js");
 let installerConfig = require(path.normalize(process.env.PWD + "/../etc/config.js"));
 
+//set the logger
+const logger = require("../utils/utils.js").getLogger();
+
 function ifNotSudo(callback) {
 	if (process.env.PLATFORM === 'Linux' && process.env.LOGNAME !== 'root') {
 		let output = "This command requires you run it as Root!\n";
@@ -379,7 +382,79 @@ let mongoModule = {
 			return custom.runPath(profilePath, dataPath, cleanDataBefore, null, callback);
 		}
 		else {
-			return callback(null, `Custom folder [folder] not found!`);
+			return callback(null, `Custom folder [${dataPath}] not found!`);
+		}
+	},
+	
+	generic: (args, callback) => {
+		if (!Array.isArray(args) || args.length === 0) {
+			return callback(null, "Missing custom folder!");
+		}
+		if (args.length > 2) {
+			args.shift();
+			return callback(null, `Unidentified input ${args.join(" ")}. Please use soajs mongo custom %folder% [--clean].`);
+		}
+		if (args[0].charAt(0) !== '/') {
+			return callback("Invalid custom folder; please provide an absolute custom folder path. Ex: sudo soajs mongo custom /%folder% [--clean].");
+		}
+		let cleanDataBefore = false;
+		if (args.length === 2) {
+			if (args[1] === "--clean") {
+				cleanDataBefore = true;
+			}
+			else {
+				args.shift();
+				return callback(null, `Unidentified input ${args.join(" ")}. Please use soajs mongo custom %folder% [--clean].`);
+			}
+		}
+		let dataPath = args[0];
+		if (dataPath.charAt(dataPath.length - 1) !== '/') {
+			dataPath = dataPath + '/';
+		}
+		if (fs.existsSync(dataPath)) {
+			let profilePath = path.normalize(process.env.PWD + "/../soajs.installer.local/data/soajs_profile.js");
+			let soa_json = path.normalize(dataPath + "/soa.json");
+			fs.stat(soa_json, (error) => {
+				if (error) {
+					return callback(null, 'soa.json not found!');
+				}
+				let soa = require(soa_json);
+				let run_for_custom = () => {
+					if (soa && soa.custom) {
+						let customPath = path.normalize(dataPath + soa.custom + "/");
+						if (fs.existsSync(customPath)) {
+							custom.runGeneric(profilePath, customPath, cleanDataBefore, (error) => {
+								if (error) {
+									logger.error(error);
+								}
+								return callback(null, 'MongoDb Soajs Data generic done!');
+							});
+						} else {
+							return callback(null, `Custom folder [${customPath}] not found!`);
+						}
+					} else {
+						return callback(null, 'Nothing to run for! Make sure either base or custom are set.');
+					}
+				};
+				if (soa && soa.base) {
+					let basePath = path.normalize(dataPath + soa.base + "/");
+					if (fs.existsSync(basePath)) {
+						custom.runPath(profilePath, basePath, cleanDataBefore, null, (error) => {
+							if (error) {
+								logger.error(error);
+							}
+							run_for_custom();
+						});
+					} else {
+						return callback(null, `Base folder [${basePath}] not found!`);
+					}
+				} else {
+					run_for_custom();
+				}
+			});
+		}
+		else {
+			return callback(null, `Custom folder [${dataPath}] not found!`);
 		}
 	},
 	

@@ -74,9 +74,7 @@ let lib = {
 		let options = {
 			"versions": VERSION_INFO,
 			"installerVersion": installerVersions,
-			
 			"cleanDataBefore": cleanDataBefore,
-			
 			"driverName": "kubernetes",
 			"dataPath": dataPath,
 			"importer": require('./../custom/index.js'),

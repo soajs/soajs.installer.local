@@ -3,7 +3,6 @@ const fs = require("fs");
 const async = require("async");
 let Mongo = require("soajs").mongo;
 
-
 let lib = {
 	
 	basic: (config, dataPath, mongoConnection, cb) => {
@@ -266,6 +265,28 @@ let lib = {
 		}
 		else
 			return cb();
+	},
+	
+	runDir: (dataPath, cleanDataBefore, mongoConnection, callback) => {
+		let getDirectories = fs.readdirSync(dataPath);
+		if (getDirectories && Array.isArray(getDirectories) && getDirectories.length > 0) {
+			async.eachSeries(
+				getDirectories,
+				(colName, cb) => {
+					let config = {
+						"colName": colName,
+						"condAnchor": "_id",
+						"objId": "_id",
+						"delete": cleanDataBefore
+					};
+					return lib.basic(config, dataPath + colName + "/", mongoConnection, cb);
+				},
+				(error) => {
+					return callback(error);
+				});
+		} else {
+			return callback(null);
+		}
 	}
 };
 
@@ -319,6 +340,40 @@ let custom = {
 			}
 		}
 	},
+	
+	"runGeneric": (profilePath, dataPath, cleanDataBefore, callback) => {
+		let profile;
+		//check if profile is found
+		fs.stat(profilePath, (error) => {
+			if (error) {
+				return callback(null, 'Profile not found!');
+			}
+			//read  mongo profile file
+			profile = require(profilePath);
+			let getDirectories = fs.readdirSync(dataPath);
+			if (getDirectories && Array.isArray(getDirectories) && getDirectories.length > 0) {
+				async.eachSeries(
+					getDirectories,
+					(dbName, cb) => {
+						if (fs.existsSync(dataPath + dbName + "/")) {
+							profile.name = dbName;
+							let mongoConnection = new Mongo(profile);
+							//run for sub dir as collections
+							lib.runDir(dataPath + dbName + "/", cleanDataBefore, mongoConnection, (error) => {
+								mongoConnection.closeDb();
+								return cb(error);
+							});
+						}
+					},
+					(error) => {
+						return callback(error);
+					});
+			} else {
+				return callback(null);
+			}
+		})
+	},
+	
 	"runPath": (profilePath, dataPath, cleanDataBefore, templates, callback) => {
 		if (!callback && templates) {
 			if (typeof templates === "function") {
