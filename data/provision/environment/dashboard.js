@@ -82,11 +82,11 @@ let doc = {
 				"password": 'soajs key lal massa'
 			},
 			"logger": {
-				"src": true,
+				"src": false,
 				"level": "debug",
 				"formatter": {
 					"levelInString": true,
-					"outputMode": 'long'
+					"outputMode": 'short'
 				}
 			},
 			"cors": {
