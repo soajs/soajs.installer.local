@@ -2,6 +2,7 @@
 
 module.exports = {
 	"name": "core_provision",
+	"cluster": "dash_cluster",
 	"prefix": "",
 	"servers": [
 		{
