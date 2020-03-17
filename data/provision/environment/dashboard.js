@@ -85,7 +85,7 @@ let doc = {
 				"src": false,
 				"level": "debug",
 				"formatter": {
-					"levelInString": true,
+					"levelInString": false,
 					"outputMode": 'short'
 				}
 			},
