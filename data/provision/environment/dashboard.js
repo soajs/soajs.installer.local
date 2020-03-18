@@ -83,7 +83,7 @@ let doc = {
 			},
 			"logger": {
 				"src": false,
-				"level": "debug",
+				"level": "error",
 				"formatter": {
 					"levelInString": false,
 					"outputMode": 'short'
