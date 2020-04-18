@@ -351,39 +351,44 @@ let mongoModule = {
 		return strategyFunction(profilePath, dataPath, callback);
 	},
 	
-	customOLD: (args, callback) => {
+	getEnv: (args, callback) => {
 		if (!Array.isArray(args) || args.length === 0) {
-			return callback(null, "Missing custom folder!");
+			return callback(null, "Missing what environment!");
 		}
-		if (args.length > 2) {
-			args.shift();
-			return callback(null, `Unidentified input ${args.join(" ")}. Please use soajs mongo custom %folder% [--clean].`);
-		}
-		if (args[0].charAt(0) !== '/') {
-			return callback("Invalid custom folder; please provide an absolute custom folder path. Ex: sudo soajs mongo custom /%folder% [--clean].");
-		}
-		let cleanDataBefore = false;
-		if (args.length === 2) {
-			if (args[1] === "--clean") {
-				cleanDataBefore = true;
-			}
-			else {
-				args.shift();
-				return callback(null, `Unidentified input ${args.join(" ")}. Please use soajs mongo custom %folder% [--clean].`);
-			}
-		}
+		let env = args[0].toUpperCase();
+		//get profile path
+		let profilePath = path.normalize(process.env.PWD + "/../soajs.installer.local/data/soajs_profile.js");
 		
-		let dataPath = args[0];
-		if (dataPath.charAt(dataPath.length - 1) !== '/')
-			dataPath = dataPath + '/';
-		
-		if (fs.existsSync(dataPath)) {
-			let profilePath = path.normalize(process.env.PWD + "/../soajs.installer.local/data/soajs_profile.js");
-			return custom.runPath(profilePath, dataPath, cleanDataBefore, null, callback);
-		}
-		else {
-			return callback(null, `Custom folder [${dataPath}] not found!`);
-		}
+		//check if profile is found
+		fs.stat(profilePath, (error) => {
+			if (error) {
+				return callback(null, 'Profile not found!');
+			}
+			
+			//read  mongo profile file
+			let profile = require(profilePath);
+			
+			//use soajs.core.modules to create a connection to core_provision database
+			let mongoConnection = new Mongo(profile);
+			let condition = {"code": env};
+			mongoConnection.findOne("environment", condition, null, (err, record) => {
+				return callback(err, record);
+			});
+			
+		});
+	},
+	
+	getControllerPort: (args, callback) => {
+		mongoModule.getEnv(args, (error, envRecord) => {
+			if (error) {
+				return callback(error);
+			}
+			if (envRecord && envRecord.services && envRecord.services.config && envRecord.services.config.ports && envRecord.services.config.ports.controller) {
+				return callback(null, envRecord.services.config.ports);
+			} else {
+				return callback(new Error("Unable to find gateway port for environment [" + args[0] + "]"))
+			}
+		});
 	},
 	
 	custom: (args, callback) => {

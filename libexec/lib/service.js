@@ -19,6 +19,8 @@ const installer = require("./installer.js");
 //set the logger
 const logger = require("../utils/utils.js").getLogger();
 
+const mongo_module = require("./mongo.js");
+
 const versionInfo = require(path.normalize(process.env.PWD + "/../soajs.installer.versions/index.js"));
 
 const installerConfig = require(path.normalize(process.env.PWD + "/../etc/config.js"));
@@ -207,45 +209,59 @@ const serviceModule = {
 		
 		//function that sets the aggregated variables as environment variables and launches the service.
 		function launchService(logLoc) {
-			
 			process.env.SOAJS_ENV = requestedEnvironment;
 			process.env.SOAJS_SRVIP = '127.0.0.1';
 			process.env.SOAJS_PROFILE = path.normalize(process.env.PWD + "/../soajs.installer.local/data/soajs_profile.js");
 			process.env.NODE_ENV = 'production';
 			process.env.SOAJS_MONGO_CON_KEEPALIVE = 'true';
+			process.env.SOAJS_DEPLOY_MANUAL = 1;
 			
 			checkIfServiceIsRunning(requestedService, requestedEnvironment, (PID) => {
 				if (PID) {
 					return callback(null, `Service ${requestedService} is already running.`);
 				}
 				else {
-					//check for custom port
-					if (args[2] && args[2].includes("--port")) {
-						let customServicePort = args[2].split("=");
-						if (customServicePort[1] && customServicePort[1] !== '') {
-							process.env.SOAJS_SRVPORT = customServicePort[1];
+					let runService = () => {
+						//check for custom port
+						if (args[2] && args[2].includes("--port")) {
+							let customServicePort = args[2].split("=");
+							if (customServicePort[1] && customServicePort[1] !== '') {
+								process.env.SOAJS_SRVPORT = customServicePort[1];
+							}
 						}
+						
+						let outLog = path.normalize(logLoc + `/${requestedEnvironment}-${requestedService}-out.log`);
+						let serviceOutLog = fs.openSync(outLog, "w");
+						
+						let errLog = path.normalize(logLoc + `/${requestedEnvironment}-${requestedService}-err.log`);
+						let serviceErrLog = fs.openSync(errLog, "w");
+						
+						let serviceInstance = spawn(process.env.NODE_BIN, [repoPath + `/index.js`, `--env=${requestedEnvironment}`], {
+							"env": process.env,
+							"stdio": ['ignore', serviceOutLog, serviceErrLog],
+							"detached": true,
+						});
+						serviceInstance.unref();
+						
+						//generate out message for service
+						let output = `Service ${requestedService} started ...\n`;
+						output += "Logs:\n";
+						output += `[ out ] -> ${outLog}\n`;
+						output += `[ err ] -> ${errLog}\n`;
+						return callback(null, output);
+					};
+					if (requestedService !== "gateway") {
+						mongo_module.getControllerPort([requestedEnvironment], (error, ports) => {
+							if (error) {
+								logger.error(error);
+								return callback(error);
+							}
+							process.env.SOAJS_REGISTRY_API = "127.0.0.1:" + (ports.controller + ports.maintenanceInc);
+							runService();
+						});
+					} else {
+						runService();
 					}
-					
-					let outLog = path.normalize(logLoc + `/${requestedEnvironment}-${requestedService}-out.log`);
-					let serviceOutLog = fs.openSync(outLog, "w");
-					
-					let errLog = path.normalize(logLoc + `/${requestedEnvironment}-${requestedService}-err.log`);
-					let serviceErrLog = fs.openSync(errLog, "w");
-					
-					let serviceInstance = spawn(process.env.NODE_BIN, [repoPath + `/index.js`, `--env=${requestedEnvironment}`], {
-						"env": process.env,
-						"stdio": ['ignore', serviceOutLog, serviceErrLog],
-						"detached": true,
-					});
-					serviceInstance.unref();
-					
-					//generate out message for service
-					let output = `Service ${requestedService} started ...\n`;
-					output += "Logs:\n";
-					output += `[ out ] -> ${outLog}\n`;
-					output += `[ err ] -> ${errLog}\n`;
-					return callback(null, output);
 				}
 			});
 		}
