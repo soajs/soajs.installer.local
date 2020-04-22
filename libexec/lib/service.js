@@ -248,7 +248,9 @@ const serviceModule = {
 						output += "Logs:\n";
 						output += `[ out ] -> ${outLog}\n`;
 						output += `[ err ] -> ${errLog}\n`;
-						return callback(null, output);
+						setTimeout(() => {
+							return callback(null, output);
+						}, 1000);
 					};
 					if (requestedService !== "gateway") {
 						mongo_module.getControllerPort([requestedEnvironment], (error, ports) => {
