@@ -310,6 +310,8 @@ const consoleModule = {
 					return callback("Error while isntalling the SOAJS Console files!")
 				}
 				
+				return callback(null, "SOAJS Console Installed!");
+				/*
 				//start microservices
 				consoleModule.start(args, (error) => {
 					if (error) {
@@ -318,6 +320,7 @@ const consoleModule = {
 					
 					return callback(null, "SOAJS Console Started!");
 				});
+				*/
 			});
 		}
 	},

@@ -386,7 +386,18 @@ let mongoModule = {
 			if (envRecord && envRecord.services && envRecord.services.config && envRecord.services.config.ports && envRecord.services.config.ports.controller) {
 				return callback(null, envRecord.services.config.ports);
 			} else {
-				return callback(new Error("Unable to find gateway port for environment [" + args[0] + "]"))
+				setTimeout(() => {
+					mongoModule.getEnv(args, (error, envRecord) => {
+						if (error) {
+							return callback(error);
+						}
+						if (envRecord && envRecord.services && envRecord.services.config && envRecord.services.config.ports && envRecord.services.config.ports.controller) {
+							return callback(null, envRecord.services.config.ports);
+						} else {
+							return callback(new Error("Unable to find gateway port for environment [" + args[0] + "]"))
+						}
+					})
+				}, 5000);
 			}
 		});
 	},
