@@ -307,6 +307,11 @@ const consoleModule = {
 			//install all repository content
 			installConsoleComponents(false, (error) => {
 				if (error) {
+					if (error.message) {
+						logger.error(error.message);
+					} else {
+						logger.error(error)
+					}
 					return callback("Error while isntalling the SOAJS Console files!")
 				}
 				
@@ -344,6 +349,11 @@ const consoleModule = {
 			//stop microservices
 			consoleModule.stop(args, (error) => {
 				if (error) {
+					if (error.message) {
+						logger.error(error.message);
+					} else {
+						logger.error(error)
+					}
 					return callback("Unable to Stop the SOAJS Console!");
 				}
 				
@@ -366,12 +376,21 @@ const consoleModule = {
 							
 							rimraf(path.normalize(installerConfig.workingDirectory + "/node_modules/*"), (error) => {
 								if (error) {
-									logger.error(error);
+									if (error.message) {
+										logger.error(error.message);
+									} else {
+										logger.error(error);
+									}
 									return callback("Error while updating the SOAJS Console files!")
 								}
 								//update all repository content
 								installConsoleComponents(true, (error) => {
 									if (error) {
+										if (error.message) {
+											logger.error(error.message);
+										} else {
+											logger.error(error)
+										}
 										return callback("Error while updating the SOAJS Console files!")
 									}
 									//start microservices
@@ -392,10 +411,12 @@ const consoleModule = {
 								return callback("Unable to get release information for the installed version [" + getInstalledVersion() + "]");
 							}
 							for (let ms in VERSION_INFO.services) {
-								let oneServiceInfo = VERSION_INFO.services[ms];
-								if (oneServiceInfo.repo) {
-									if (oneServiceInfo.type === "console" || oneServiceInfo.type === "any") {
-										ms_and_core[ms] = oneServiceInfo.repo;
+								if (VERSION_INFO.services.hasOwnProperty(ms)) {
+									let oneServiceInfo = VERSION_INFO.services[ms];
+									if (oneServiceInfo.repo) {
+										if (oneServiceInfo.type === "console" || oneServiceInfo.type === "any") {
+											ms_and_core[ms] = oneServiceInfo.repo;
+										}
 									}
 								}
 							}
@@ -404,7 +425,11 @@ const consoleModule = {
 								logger.debug(path.normalize(installerConfig.workingDirectory + "/node_modules/" + ms_and_core[oneService]));
 								rimraf(path.normalize(installerConfig.workingDirectory + "/node_modules/" + ms_and_core[oneService]), (error) => {
 									if (error) {
-										logger.error(error);
+										if (error.message) {
+											logger.error(error.message);
+										} else {
+											logger.error(error);
+										}
 										return mCb(error);
 									}
 									logger.debug(oneService + " --> " + oneRepo + ": Removed!\n");
@@ -417,6 +442,11 @@ const consoleModule = {
 								//update all repository content
 								installConsoleComponents(true, (error) => {
 									if (error) {
+										if (error.message) {
+											logger.error(error.message);
+										} else {
+											logger.error(error)
+										}
 										return callback("Error while updating the SOAJS Console files!")
 									}
 									//start microservices
@@ -485,7 +515,11 @@ const consoleModule = {
 										logger.debug(path.normalize(installerConfig.workingDirectory + "/node_modules/" + oneRepo) + "\n");
 										rimraf(path.normalize(installerConfig.workingDirectory + "/node_modules/" + oneRepo), (error) => {
 											if (error) {
-												logger.error(error);
+												if (error.message) {
+													logger.error(error.message);
+												} else {
+													logger.error(error);
+												}
 												return mCb(error);
 											}
 											logger.debug(`${oneService} --> ${oneRepo}: Removed!`);
@@ -502,7 +536,11 @@ const consoleModule = {
 									//remove working directory
 									rimraf(path.normalize(installerConfig.workingDirectory), (error) => {
 										if (error) {
-											logger.error(error);
+											if (error.message) {
+												logger.error(error.message);
+											} else {
+												logger.error(error);
+											}
 											return callback(error);
 										}
 										
@@ -572,7 +610,7 @@ const consoleModule = {
 		ifNotSudo(callback);
 		
 		logger.debug("Checking MongoDB Server ....");
-		mongoModule.start([], (error, response) => {
+		mongoModule.start([], (error) => {
 			if (error) {
 				return callback(error);
 			}

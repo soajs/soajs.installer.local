@@ -1,5 +1,7 @@
 "use strict";
 
+process.env.SOAJS_REGISTRY_API = "127.0.0.1:5000";
+
 const path = require("path");
 const semver = require('semver')
 
@@ -111,7 +113,11 @@ if (!Object.hasOwnProperty.call(myModule, commandRequested)) {
 process.env.SOAJS_INSTALLER_COMMAND = commandRequested;
 myModule[commandRequested](processArguments, (error, response) => {
 	if (error) {
-		logger.error(error);
+		if (error.message) {
+			logger.error(error.message);
+		} else {
+			logger.error(error);
+		}
 	}
 	else {
 		if (response) {

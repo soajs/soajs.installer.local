@@ -57,7 +57,7 @@ let ifNotSudo = (callback) => {
 	}
 };
 
-const servicesModule = {
+let servicesModule = {
 	
 	/**
 	 * This function starts all soajs services for a given environment

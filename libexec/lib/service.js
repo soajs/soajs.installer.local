@@ -25,17 +25,6 @@ const versionInfo = require(path.normalize(process.env.PWD + "/../soajs.installe
 
 const installerConfig = require(path.normalize(process.env.PWD + "/../etc/config.js"));
 
-/*
-const SOAJS_RMS = {
-    'gateway': "soajs.controller",
-    'urac': 'soajs.urac',
-    'oauth': 'soajs.oauth',
-    'dashboard': 'soajs.dashboard',
-    'multitenant': "soajs.multitenant",
-    'ui': 'soajs.dashboard.ui'
-};
-*/
-
 function getInstalledVersion() {
 	if (installerConfig && installerConfig.version) {
 		return installerConfig.version;
@@ -63,7 +52,7 @@ function checkIfServiceIsRunning(requestedService, requestedEnvironment, callbac
 		//go through the returned output and find the process ID
 		cmdOutput = cmdOutput.split("\n");
 		if (Array.isArray(cmdOutput) && cmdOutput.length > 0) {
-			let PID;
+			let PID = null;
 			cmdOutput.forEach((oneCMDLine) => {
 				
 				if (!oneCMDLine.includes("grep")) {
@@ -87,8 +76,7 @@ function checkIfServiceIsRunning(requestedService, requestedEnvironment, callbac
 				return callback(false);
 			}
 			return callback(PID)
-		}
-		else {
+		} else {
 			return callback(false);
 		}
 	});
@@ -255,7 +243,11 @@ const serviceModule = {
 					if (requestedService !== "gateway") {
 						mongo_module.getControllerPort([requestedEnvironment], (error, ports) => {
 							if (error) {
-								logger.error(error);
+								if (error.message) {
+									logger.error(error.message);
+								} else {
+									logger.error(error);
+								}
 								return callback(error);
 							}
 							process.env.SOAJS_REGISTRY_API = "127.0.0.1:" + (ports.controller + ports.maintenanceInc);

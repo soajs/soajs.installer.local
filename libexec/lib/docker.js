@@ -84,12 +84,11 @@ let dockerModule = {
 	connect: (args, callback) => {
 		
 		function getHostIP() {
-			var ips = [];
-			var ifnameLookupSequence = [];
+			let ips = [];
 			
-			var os = require('os');
-			var ifaces = os.networkInterfaces();
-			ifnameLookupSequence = ["eth0", "en0", "eth1", "en1"];
+			let os = require('os');
+			let ifaces = os.networkInterfaces();
+			let ifnameLookupSequence = ["eth0", "en0", "eth1", "en1"];
 			Object.keys(ifaces).forEach(function (ifname) {
 				ifaces[ifname].forEach(function (iface) {
 					if ('IPv4' !== iface.family || iface.internal !== false) {
@@ -99,7 +98,7 @@ let dockerModule = {
 					ips[ifname] = iface.address;
 				});
 			});
-			for (var i = 0; i < ifnameLookupSequence.length; i++) {
+			for (let i = 0; i < ifnameLookupSequence.length; i++) {
 				if (ips[ifnameLookupSequence[i]])
 					return ips[ifnameLookupSequence[i]];
 			}
@@ -120,7 +119,7 @@ let dockerModule = {
 		}
 		
 		//check if docker is running
-		exec("sudo docker ps", (err, data) => {
+		exec("sudo docker ps", (err) => {
 			if (err) {
 				return callback("Docker is not installed or not running.\n[ Install ] -> soajs docker install\n[ Start ] -> soajs docker start");
 			}
@@ -258,7 +257,7 @@ let dockerModule = {
 				}
 			});
 			
-			start.on('close', (code) => {
+			start.on('close', () => {
 				checkIfDockerOSXisRunning(0, () => {
 					dockerModule.connect(args, callback);
 				});
@@ -288,7 +287,7 @@ let dockerModule = {
 						if (data) {
 							if (data.toString().includes("----- DONE -----")) {
 								let out = "Docker Swarm started on Ubuntu, please run soajs docker connect.";
-								out += "\nDocker CLI Commands require (sudo) to work, ex: sudo docker ps"
+								out += "\nDocker CLI Commands require (sudo) to work, ex: sudo docker ps";
 								
 								return callback(null, out);
 							}
@@ -308,7 +307,7 @@ let dockerModule = {
 		}
 		
 		function checkIfDockerOSXisRunning(counter, vCb) {
-			exec("docker stats --no-stream", (error, response) => {
+			exec("docker stats --no-stream", (error) => {
 				if (error) {
 					if (counter === 0) {
 						console.log("Checking if Docker Swarm on OSX is running ...");

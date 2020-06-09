@@ -18,6 +18,13 @@ let Mongo = require("soajs").mongo;
 const custom = require("../custom/index.js");
 let installerConfig = require(path.normalize(process.env.PWD + "/../etc/config.js"));
 
+function getInstalledVersion() {
+	if (installerConfig && installerConfig.version) {
+		return installerConfig.version;
+	}
+	return null;
+}
+
 //set the logger
 const logger = require("../utils/utils.js").getLogger();
 
@@ -433,7 +440,7 @@ let mongoModule = {
 			let soa_json = path.normalize(dataPath + "/soa.json");
 			fs.stat(soa_json, (error) => {
 				if (error) {
-					return custom.runPath(profilePath, dataPath, cleanDataBefore, null, callback);
+					return custom.runPath(profilePath, dataPath, cleanDataBefore, null, callback, getInstalledVersion());
 				} else {
 					let soa = require(soa_json);
 					let run_for_custom = () => {
@@ -442,7 +449,11 @@ let mongoModule = {
 							if (fs.existsSync(customPath)) {
 								custom.runGeneric(profilePath, customPath, cleanDataBefore, (error) => {
 									if (error) {
-										logger.error(error);
+										if (error.message) {
+											logger.error(error.message);
+										} else {
+											logger.error(error);
+										}
 									}
 									return callback(null, 'MongoDb Soajs Data generic done!');
 								});
@@ -458,10 +469,14 @@ let mongoModule = {
 						if (fs.existsSync(basePath)) {
 							custom.runPath(profilePath, basePath, cleanDataBefore, null, (error) => {
 								if (error) {
-									logger.error(error);
+									if (error.message) {
+										logger.error(error.message);
+									} else {
+										logger.error(error);
+									}
 								}
 								run_for_custom();
-							});
+							}, getInstalledVersion());
 						} else {
 							return callback(null, `Base folder [${basePath}] not found!`);
 						}
@@ -495,7 +510,9 @@ let mongoModule = {
 						for (let keyIndex = 0; keyIndex < keys.length; keyIndex++) {
 							if (keys[keyIndex].config && keys[keyIndex].config.dashboard && keys[keyIndex].config.dashboard.urac && keys[keyIndex].config.dashboard.urac.mail) {
 								for (let operation in keys[keyIndex].config.dashboard.urac.mail) {
-									keys[keyIndex].config.dashboard.urac.mail[operation].path = keys[keyIndex].config.dashboard.urac.mail[operation].path.replace("%wrkDir%", workingDirectory);
+									if (keys[keyIndex].config.dashboard.urac.mail.hasOwnProperty(operation)) {
+										keys[keyIndex].config.dashboard.urac.mail[operation].path = keys[keyIndex].config.dashboard.urac.mail[operation].path.replace("%wrkDir%", workingDirectory);
+									}
 								}
 							}
 						}
@@ -504,14 +521,13 @@ let mongoModule = {
 			}
 		};
 		let resourceFn = (doc) => {
-			let profile = require(profilePath);
-			doc.config = profile;
+			doc.config = require(profilePath);
 		};
 		
 		return custom.runPath(profilePath, dataPath, cleanDataBefore, {
 			"tenants": tenantFn,
 			"resources": resourceFn
-		}, callback);
+		}, callback, getInstalledVersion());
 	}
 };
 

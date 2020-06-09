@@ -3,6 +3,9 @@ const fs = require("fs");
 const async = require("async");
 let Mongo = require("soajs").mongo;
 
+//set the logger
+const logger = require("../utils/utils.js").getLogger();
+
 let lib = {
 	
 	basic: (config, dataPath, mongoConnection, cb) => {
@@ -374,7 +377,7 @@ let custom = {
 		})
 	},
 	
-	"runPath": (profilePath, dataPath, cleanDataBefore, templates, callback) => {
+	"runPath": (profilePath, dataPath, cleanDataBefore, templates, callback, release) => {
 		if (!callback && templates) {
 			if (typeof templates === "function") {
 				callback = templates;
@@ -390,15 +393,22 @@ let custom = {
 			
 			//read  mongo profile file
 			profile = require(profilePath);
-			custom.runProfile(profile, dataPath, cleanDataBefore, templates, callback);
+			custom.runProfile(profile, dataPath, cleanDataBefore, templates, callback, release);
 		})
 	},
-	"runProfile": (profile, dataPath, cleanDataBefore, templates, callback) => {
+	"runProfile": (profile, dataPath, cleanDataBefore, templates, callback, release) => {
 		
 		//NOTE: templates is an object with keys as collections and value a function to be called as "docManipulation" to manipulate the record before inserting it into mongo
 		//use soajs.core.modules to create a connection to core_provision database
 		if (!templates) {
 			templates = {};
+		}
+		if (release) {
+			release = "_release/" + release + "/";
+			let path = dataPath + release;
+			if (!fs.existsSync(path)) {
+				logger.warn("Unable to find the release data folder: " + path);
+			}
 		}
 		let mongoConnection = new Mongo(profile);
 		async.waterfall([
@@ -462,7 +472,53 @@ let custom = {
 				},
 				function (cb) {
 					//check for gitAccounts data
-					if (fs.existsSync(dataPath + "gitAccounts/")) {
+					let path = dataPath + "git/accounts/";
+					if (release) {
+						path = dataPath + release + "git/accounts/";
+					}
+					if (fs.existsSync(path)) {
+						let config = {
+							"colName": "git",
+							"condAnchor": "owner",
+							"objId": "_id",
+							"delete": cleanDataBefore
+						};
+						if (templates.git && typeof templates.git === "function") {
+							config.docManipulation = templates.git;
+						}
+						return lib.basic(config, path, mongoConnection, cb);
+					} else {
+						return cb(null);
+					}
+				},
+				function (cb) {
+					//check for gitAccounts data
+					let path = dataPath + "git/repositories/";
+					if (release) {
+						path = dataPath + release + "git/repositories/";
+					}
+					if (fs.existsSync(path)) {
+						let config = {
+							"colName": "git",
+							"condAnchor": "repository",
+							"objId": "_id",
+							"delete": cleanDataBefore
+						};
+						if (templates.git && typeof templates.git === "function") {
+							config.docManipulation = templates.git;
+						}
+						return lib.basic(config, path, mongoConnection, cb);
+					} else {
+						return cb(null);
+					}
+				},
+				function (cb) {
+					//check for gitAccounts data
+					let path = dataPath + "gitAccounts/";
+					if (release) {
+						path = dataPath + release + "gitAccounts/";
+					}
+					if (fs.existsSync(path)) {
 						let config = {
 							"colName": "git_accounts",
 							"condAnchor": "owner",
@@ -472,7 +528,7 @@ let custom = {
 						if (templates.gitAccounts && typeof templates.gitAccounts === "function") {
 							config.docManipulation = templates.gitAccounts;
 						}
-						return lib.basic(config, dataPath + "gitAccounts/", mongoConnection, cb);
+						return lib.basic(config, path, mongoConnection, cb);
 					} else {
 						return cb(null);
 					}
@@ -490,6 +546,48 @@ let custom = {
 							config.docManipulation = templates.infra;
 						}
 						return lib.basic(config, dataPath + "infra/", mongoConnection, cb);
+					} else {
+						return cb(null);
+					}
+				},
+				function (cb) {
+					//check for marketplace data
+					let path = dataPath + "marketplace/";
+					if (release) {
+						path = dataPath + release + "marketplace/";
+					}
+					if (fs.existsSync(path)) {
+						let config = {
+							"colName": "marketplace",
+							"condAnchor": "name",
+							"objId": "_id",
+							"delete": cleanDataBefore
+						};
+						if (templates.marketplace && typeof templates.marketplace === "function") {
+							config.docManipulation = templates.marketplace;
+						}
+						return lib.basic(config, path, mongoConnection, cb);
+					} else {
+						return cb(null);
+					}
+				},
+				function (cb) {
+					//check for products data
+					let path = dataPath + "products/";
+					if (release) {
+						path = dataPath + release + "products/";
+					}
+					if (fs.existsSync(path)) {
+						let config = {
+							"colName": "products",
+							"condAnchor": "code",
+							"objId": "_id",
+							"delete": cleanDataBefore
+						};
+						if (templates.products && typeof templates.products === "function") {
+							config.docManipulation = templates.products;
+						}
+						return lib.basic(config, path, mongoConnection, cb);
 					} else {
 						return cb(null);
 					}
@@ -530,7 +628,11 @@ let custom = {
 				},
 				function (cb) {
 					//check for services data
-					if (fs.existsSync(dataPath + "services/")) {
+					let path = dataPath + "services/";
+					if (release) {
+						path = dataPath + release + "services/";
+					}
+					if (fs.existsSync(path)) {
 						let config = {
 							"colName": "services",
 							"condAnchor": "name",
@@ -540,7 +642,7 @@ let custom = {
 						if (templates.services && typeof templates.services === "function") {
 							config.docManipulation = templates.services;
 						}
-						return lib.basic(config, dataPath + "services/", mongoConnection, cb);
+						return lib.basic(config, path, mongoConnection, cb);
 					} else {
 						return cb(null);
 					}

@@ -97,7 +97,7 @@ let kubeModule = {
 		let execPath = path.normalize(process.env.PWD + "/../soajs.installer.local/libexec/bin/FILES/KUBERNETES/kubernetes-api.sh");
 		execPath = "sudo " + execPath;
 		
-		exec("kubectl get ns", (error, data) => {
+		exec("kubectl get ns", (error) => {
 			if (error) {
 				return callback("Kubernetes is not installed or not running.... if you just installed it wait couple of minutes before you connect.\n[ Install ] -> soajs kubernetes install\n[ Start ] -> soajs kubernetes start");
 			}
