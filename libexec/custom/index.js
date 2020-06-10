@@ -535,7 +535,11 @@ let custom = {
 				},
 				function (cb) {
 					//check for infra data
-					if (fs.existsSync(dataPath + "infra/")) {
+					let path = dataPath + "infra/";
+					if (release) {
+						path = dataPath + release + "infra/";
+					}
+					if (fs.existsSync(path)) {
 						let config = {
 							"colName": "infra",
 							"condAnchor": "label",
@@ -545,7 +549,7 @@ let custom = {
 						if (templates.infra && typeof templates.infra === "function") {
 							config.docManipulation = templates.infra;
 						}
-						return lib.basic(config, dataPath + "infra/", mongoConnection, cb);
+						return lib.basic(config, path, mongoConnection, cb);
 					} else {
 						return cb(null);
 					}

@@ -11,40 +11,6 @@ let doc = {
 		"selected": "manual",
 		"manual": {
 			"nodes": "127.0.0.1",
-		},
-		"container": {
-			"docker": {
-				"local": {
-					"nodes": "",
-					"socketPath": "/var/run/docker.sock",
-				},
-				"remote": {
-					"apiPort": "",
-					"nodes": "",
-					"apiProtocol": "",
-					"auth": {
-						"token": ""
-					}
-				}
-			},
-			"kubernetes": {
-				"local": {
-					"nodes": "",
-					"apiPort": "",
-					"namespace": "",
-					"auth": {
-						"token": ""
-					}
-				},
-				"remote": {
-					"nodes": "",
-					"apiPort": "",
-					"namespace": "",
-					"auth": {
-						"token": ""
-					}
-				}
-			}
 		}
 	},
 	"description": "SOAJS Console Environment",
@@ -73,9 +39,6 @@ let doc = {
 				"autoRelaodRegistry": 1000 * 60 * 60 * 24, // 24 hr
 				"maxLogCount": 5,
 				"autoRegisterService": true
-			},
-			"agent": {
-				"topologyDir": "/opt/tmp/soajs/"
 			},
 			"key": {
 				"algorithm": 'aes256',
