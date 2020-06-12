@@ -462,12 +462,14 @@ let custom = {
 					};
 					if (fs.existsSync(dataPath + "environments/")) {
 						doImport("environments/");
+					} else if (fs.existsSync(dataPath + release + "environments/")) {
+						doImport(release + "environments/");
+					} else if (fs.existsSync(dataPath + "environment/")) {
+						doImport("environment/");
+					} else if (fs.existsSync(dataPath + release + "environment/")) {
+						doImport(release + "environment/");
 					} else {
-						if (fs.existsSync(dataPath + "environment/")) {
-							doImport("environment/");
-						} else {
-							return cb(null);
-						}
+						return cb(null);
 					}
 				},
 				function (cb) {
