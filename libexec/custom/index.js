@@ -579,7 +579,7 @@ let custom = {
 				},
 				function (cb) {
 					//check for products data
-					let path = dataPath + "products/";
+					let path = null;
 					if (release) {
 						path = dataPath + release + "products/";
 					}

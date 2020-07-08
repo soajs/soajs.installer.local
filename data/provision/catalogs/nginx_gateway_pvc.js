@@ -3,16 +3,10 @@
 let doc = {
 	"_id": "5df3ec10fa3912534948f009",
 	"name": "Nginx and gateway with automated ssl as pvc",
-	"type": "server",
+	"type": "soajs",
 	"subtype": "nginx",
-	"soajs": true,
-	"locked": true,
 	"description": "Deploy Nginx in front of SOAJS Gateway with automated https certificate. This requires a ReadWriteMany pvc with claim name as nfs-pvc",
-	"restriction": {
-		"deployment": [
-			"container"
-		]
-	},
+	"locked": true,
 	"recipe": {
 		"deployOptions": {
 			"image": {
@@ -23,16 +17,7 @@ let doc = {
 				"repositoryType": "public",
 				"override": true
 			},
-			"sourceCode": {
-				"custom": {
-					"label": "Attach Custom UI",
-					"type": "static",
-					"repo": "",
-					"branch": "",
-					"required": false
-				}
-			},
-			"certificates": "none",
+			"sourceCode": {},
 			"readinessProbe": {
 				"httpGet": {
 					"path": "/",
@@ -60,7 +45,6 @@ let doc = {
 			],
 			"voluming": [
 				{
-					"docker": {},
 					"kubernetes": {
 						"volume": {
 							"name": "soajscert",
@@ -82,8 +66,7 @@ let doc = {
 			"container": {
 				"network": "soajsnet",
 				"workingDir": "/opt/soajs/soajs.deployer/deployer/"
-			},
-			"allowExposeServicePort": false
+			}
 		},
 		"buildOptions": {
 			"env": {
@@ -91,25 +74,13 @@ let doc = {
 					"type": "computed",
 					"value": "$SOAJS_ENV"
 				},
-				"SOAJS_NX_DOMAIN": {
-					"type": "computed",
-					"value": "$SOAJS_NX_DOMAIN"
-				},
 				"SOAJS_NX_API_DOMAIN": {
 					"type": "computed",
 					"value": "$SOAJS_NX_API_DOMAIN"
 				},
-				"SOAJS_NX_SITE_DOMAIN": {
-					"type": "computed",
-					"value": "$SOAJS_NX_SITE_DOMAIN"
-				},
-				"SOAJS_NX_CONTROLLER_NB": {
-					"type": "computed",
-					"value": "$SOAJS_NX_CONTROLLER_NB"
-				},
 				"SOAJS_NX_CONTROLLER_IP": {
 					"type": "computed",
-					"value": "$SOAJS_NX_CONTROLLER_IP_N"
+					"value": "$SOAJS_NX_CONTROLLER_IP"
 				},
 				"SOAJS_NX_CONTROLLER_PORT": {
 					"type": "computed",
@@ -123,9 +94,7 @@ let doc = {
 					"fieldMsg": "Add the SSL certificate email owner and set if you want to redirect http to https"
 				}
 			},
-			"settings": {
-				"accelerateDeployment": false
-			},
+			"settings": {},
 			"cmd": {
 				"deploy": {
 					"command": [

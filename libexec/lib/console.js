@@ -127,7 +127,7 @@ function installConsoleComponents(upgrade, cb) {
 			let oneRepo = oneServiceInfo.repo;
 			if (oneServiceInfo.type === "console" || oneServiceInfo.type === "any") {
 				if (oneServiceInfo.ver) {
-					oneRepo += "@" + oneServiceInfo.ver;
+					oneRepo += "@" + oneServiceInfo.semVer;
 				}
 				checkIfModuleIsInstalled(oneRepo, (error, exists) => {
 					if (error) {
