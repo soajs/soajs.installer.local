@@ -1,4 +1,13 @@
-'use strict';
+"use strict";
+
+/**
+ * @license
+ * Copyright SOAJS All Rights Reserved.
+ *
+ * Use of this source code is governed by an Apache license that can be
+ * found in the LICENSE file at the root of this repository
+ */
+
 const fs = require("fs");
 const async = require("async");
 let Mongo = require("soajs").mongo;
@@ -138,8 +147,9 @@ let lib = {
 					return cb();
 				});
 		}
-		else
+		else {
 			return cb();
+		}
 	},
 	users: (config, dataPath, profile, cb) => {
 		let records = [];
@@ -202,8 +212,9 @@ let lib = {
 					return cb();
 				});
 		}
-		else
+		else {
 			return cb();
+		}
 	},
 	groups: (config, dataPath, profile, cb) => {
 		let records = [];
@@ -266,8 +277,9 @@ let lib = {
 					return cb();
 				});
 		}
-		else
+		else {
 			return cb();
+		}
 	},
 	
 	runDir: (dataPath, cleanDataBefore, mongoConnection, callback) => {
@@ -374,7 +386,7 @@ let custom = {
 			} else {
 				return callback(null);
 			}
-		})
+		});
 	},
 	
 	"runPath": (profilePath, dataPath, cleanDataBefore, templates, callback, release) => {
@@ -394,7 +406,7 @@ let custom = {
 			//read  mongo profile file
 			profile = require(profilePath);
 			custom.runProfile(profile, dataPath, cleanDataBefore, templates, callback, release);
-		})
+		});
 	},
 	"runProfile": (profile, dataPath, cleanDataBefore, templates, callback, release) => {
 		

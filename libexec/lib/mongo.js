@@ -126,7 +126,7 @@ let mongoModule = {
 		//check ig mongo.conf is found
 		fs.stat(mongoDbConf, (error) => {
 			if (error) {
-				return callback(null, `MongoDB configuration file not found. Run [soajs mongo install] to create one.`)
+				return callback(null, `MongoDB configuration file not found. Run [soajs mongo install] to create one.`);
 			}
 			let mongoPath = process.env.PWD + "/../include/" + process.env.MONGO_LOCATION + "/bin/mongod";
 			const startMongo = spawn("sudo", [mongoPath, `--config=${mongoDbConf}`],
@@ -322,7 +322,7 @@ let mongoModule = {
 						else {
 							//close mongo connection
 							mongoConnection.closeDb();
-							return callback(null, "MongoDB SOAJS data has been removed...")
+							return callback(null, "MongoDB SOAJS data has been removed...");
 						}
 					});
 				}
@@ -401,9 +401,9 @@ let mongoModule = {
 						if (envRecord && envRecord.services && envRecord.services.config && envRecord.services.config.ports && envRecord.services.config.ports.controller) {
 							return callback(null, envRecord.services.config.ports);
 						} else {
-							return callback(new Error("Unable to find gateway port for environment [" + args[0] + "]"))
+							return callback(new Error("Unable to find gateway port for environment [" + args[0] + "]"));
 						}
-					})
+					});
 				}, 5000);
 			}
 		});

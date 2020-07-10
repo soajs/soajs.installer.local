@@ -1,4 +1,13 @@
-'use strict';
+"use strict";
+
+/**
+ * @license
+ * Copyright SOAJS All Rights Reserved.
+ *
+ * Use of this source code is governed by an Apache license that can be
+ * found in the LICENSE file at the root of this repository
+ */
+
 const fs = require("fs");
 const async = require("async");
 let Mongo = require("soajs").mongo;
@@ -32,7 +41,7 @@ module.exports = (profilePath, dataPath, callback) => {
                 },
                 () => {
                     mongoConnection.closeDb();
-                    return callback(null, "MongoDb Soajs Data migrate!")
+                    return callback(null, "MongoDb Soajs Data migrate!");
                 }
             );
         }

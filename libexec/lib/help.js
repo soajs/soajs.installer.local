@@ -85,15 +85,17 @@ const helpModule = {
 		};
 		
 		for (let section in manual) {
-			output += `${section}:\n`;
-			
-			let commands = manual[section];
-			for (let command in commands) {
-				if (commands.hasOwnProperty(command)) {
-					output += `${command}\t\t${commands[command]}\n`;
+			if (manual.hasOwnProperty(section)) {
+				output += `${section}:\n`;
+				
+				let commands = manual[section];
+				for (let command in commands) {
+					if (commands.hasOwnProperty(command)) {
+						output += `${command}\t\t${commands[command]}\n`;
+					}
 				}
+				output += "\n";
 			}
-			output += "\n";
 		}
 		
 		output += "\n";

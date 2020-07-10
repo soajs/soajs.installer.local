@@ -75,7 +75,7 @@ function checkIfServiceIsRunning(requestedService, requestedEnvironment, callbac
 			if (!PID) {
 				return callback(false);
 			}
-			return callback(PID)
+			return callback(PID);
 		} else {
 			return callback(false);
 		}
@@ -156,7 +156,7 @@ const serviceModule = {
 				case 'Darwin':
 					logLoc = "/usr/local/var/log/soajs/";
 					break;
-				case 'Linux':
+				//case 'Linux':
 				default:
 					logLoc = "/var/log/soajs/";
 					break;
@@ -302,7 +302,9 @@ const serviceModule = {
 							output += `In your Browser, open: http://${uiConfig.host}:${uiConfig.port}/ \n`;
 							return callback(null, output);
 						}
-						else return callback(null, null);
+						else {
+							return callback(null, null);
+						}
 					}
 				});
 			}
@@ -383,8 +385,9 @@ const serviceModule = {
 		logger.info(`Restarting ${serviceType} ${requestedService} ...`);
 		
 		serviceModule.stop(args, (error, msg) => {
-			if (error)
+			if (error) {
 				return callback(error, msg);
+			}
 			let output = msg;
 			serviceModule.start(args, (error, msg) => {
 				output += `\n`;

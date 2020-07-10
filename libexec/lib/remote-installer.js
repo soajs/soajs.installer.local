@@ -392,7 +392,7 @@ const serviceModule = {
 										logger.debug("skipping: " + filePath + dir);
 										return cb();
 									}
-								})
+								});
 							}, (error) => {
 								return callback(error);
 							});

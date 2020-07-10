@@ -70,7 +70,7 @@ let kubeModule = {
 						
 						install.on('close', (code) => {
 							if (code === 0) {
-								return callback(null, "Kubernetes downloaded and installed..... PLease wait couple of minutes before you connect to it")
+								return callback(null, "Kubernetes downloaded and installed..... PLease wait couple of minutes before you connect to it");
 							}
 							else {
 								return callback("Error while downloading and installing Kubernetes!");
@@ -103,7 +103,7 @@ let kubeModule = {
 			}
 			else {
 				exec(execPath, (err, result) => {
-					return callback(err, result)
+					return callback(err, result);
 				});
 			}
 		});
@@ -143,7 +143,7 @@ let kubeModule = {
 			
 			remove.on('close', (code) => {
 				if (code === 0) {
-					return callback(null, "Kubernetes removed ...")
+					return callback(null, "Kubernetes removed ...");
 				}
 				else {
 					return callback("Error while removing Kubernetes!");
@@ -197,7 +197,7 @@ let kubeModule = {
 					
 					start.on('close', (code) => {
 						if (code === 0) {
-							return callback(null, "Kubernetes started on Ubuntu, please run soajs kubernetes connect.")
+							return callback(null, "Kubernetes started on Ubuntu, please run soajs kubernetes connect.");
 						}
 						else {
 							return callback("Error while starting Kubernetes!");
@@ -205,7 +205,7 @@ let kubeModule = {
 					});
 				}
 				else {
-					return callback(null, "Command inapplicable on Linux machines..")
+					return callback(null, "Command inapplicable on Linux machines..");
 				}
 			}
 		});
@@ -223,7 +223,7 @@ let kubeModule = {
 					return callback(err);
 				}
 				
-				return callback(null, "Kubernetes stopped...")
+				return callback(null, "Kubernetes stopped...");
 			});
 		}
 		else if (process.env.PLATFORM === 'Linux') {
@@ -236,7 +236,7 @@ let kubeModule = {
 			});
 		}
 		else {
-			return callback(null, "Command inapplicable on Linux machines...")
+			return callback(null, "Command inapplicable on Linux machines...");
 		}
 	},
 	

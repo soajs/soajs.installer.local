@@ -1,4 +1,13 @@
-'use strict';
+"use strict";
+
+/**
+ * @license
+ * Copyright SOAJS All Rights Reserved.
+ *
+ * Use of this source code is governed by an Apache license that can be
+ * found in the LICENSE file at the root of this repository
+ */
+
 const fs = require("fs");
 let Mongo = require("soajs").mongo;
 
@@ -23,7 +32,7 @@ module.exports = (profilePath, dataPath, callback) => {
         mongoConnectionTenant.update("products", condition, record, {'upsert': true}, () => {
             //close mongo connection
             mongoConnectionTenant.closeDb();
-            return callback(null, "MongoDb Soajs Data migrate!")
+            return callback(null, "MongoDb Soajs Data migrate!");
         });
     });
 };

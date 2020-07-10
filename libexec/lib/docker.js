@@ -99,8 +99,9 @@ let dockerModule = {
 				});
 			});
 			for (let i = 0; i < ifnameLookupSequence.length; i++) {
-				if (ips[ifnameLookupSequence[i]])
+				if (ips[ifnameLookupSequence[i]]) {
 					return ips[ifnameLookupSequence[i]];
+				}
 			}
 			return null;
 		}
@@ -320,7 +321,7 @@ let dockerModule = {
 					}
 					else {
 						setTimeout(() => {
-							checkIfDockerOSXisRunning(counter, vCb)
+							checkIfDockerOSXisRunning(counter, vCb);
 						}, 5000);
 					}
 				}
@@ -345,13 +346,13 @@ let dockerModule = {
 			exec(command, (err) => {
 				if (err) {
 					if (err.toString().includes("No matching processes belonging to you were found")) {
-						return callback(null, "Docker Swarm stopped..")
+						return callback(null, "Docker Swarm stopped..");
 					}
 					else {
 						return callback(err);
 					}
 				}
-				return callback(null, "Docker Swarm stopped..")
+				return callback(null, "Docker Swarm stopped..");
 			});
 		}
 		else if (process.env.PLATFORM === 'Linux') {

@@ -110,7 +110,7 @@ function installConsoleComponents(upgrade, cb) {
 				}
 			}
 			else {
-				return cb(null, true)
+				return cb(null, true);
 			}
 		});
 	}
@@ -310,9 +310,9 @@ const consoleModule = {
 					if (error.message) {
 						logger.error(error.message);
 					} else {
-						logger.error(error)
+						logger.error(error);
 					}
-					return callback("Error while isntalling the SOAJS Console files!")
+					return callback("Error while isntalling the SOAJS Console files!");
 				}
 				
 				return callback(null, "SOAJS Console Installed!");
@@ -352,7 +352,7 @@ const consoleModule = {
 					if (error.message) {
 						logger.error(error.message);
 					} else {
-						logger.error(error)
+						logger.error(error);
 					}
 					return callback("Unable to Stop the SOAJS Console!");
 				}
@@ -381,7 +381,7 @@ const consoleModule = {
 									} else {
 										logger.error(error);
 									}
-									return callback("Error while updating the SOAJS Console files!")
+									return callback("Error while updating the SOAJS Console files!");
 								}
 								//update all repository content
 								installConsoleComponents(true, (error) => {
@@ -389,9 +389,9 @@ const consoleModule = {
 										if (error.message) {
 											logger.error(error.message);
 										} else {
-											logger.error(error)
+											logger.error(error);
 										}
-										return callback("Error while updating the SOAJS Console files!")
+										return callback("Error while updating the SOAJS Console files!");
 									}
 									//start microservices
 									consoleModule.start(args, (error) => {
@@ -445,9 +445,9 @@ const consoleModule = {
 										if (error.message) {
 											logger.error(error.message);
 										} else {
-											logger.error(error)
+											logger.error(error);
 										}
-										return callback("Error while updating the SOAJS Console files!")
+										return callback("Error while updating the SOAJS Console files!");
 									}
 									//start microservices
 									consoleModule.start(args, (error) => {
@@ -658,7 +658,7 @@ const consoleModule = {
 		});
 		
 		function launchMyService(oneService, mCb) {
-			serviceModule.start([oneService, "--env=" + requestedEnvironment], mCb)
+			serviceModule.start([oneService, "--env=" + requestedEnvironment], mCb);
 		}
 		
 		function reloadControllerAwareness(cb) {
@@ -732,7 +732,7 @@ const consoleModule = {
 		}, 1000);
 		
 		function launchMyService(oneService, mCb) {
-			serviceModule.stop([oneService, "--env=" + requestedEnvironment], mCb)
+			serviceModule.stop([oneService, "--env=" + requestedEnvironment], mCb);
 		}
 	},
 	

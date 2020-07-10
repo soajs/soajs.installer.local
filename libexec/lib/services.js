@@ -124,7 +124,7 @@ let servicesModule = {
 			});
 			
 			function launchMyService(oneService, mCb) {
-				serviceModule.start([oneService, "--env=" + requestedEnvironment], mCb)
+				serviceModule.start([oneService, "--env=" + requestedEnvironment], mCb);
 			}
 		});
 	},
@@ -188,7 +188,7 @@ let servicesModule = {
 			}, 1000);
 			
 			function launchMyService(oneService, mCb) {
-				serviceModule.stop([oneService, "--env=" + requestedEnvironment], mCb)
+				serviceModule.stop([oneService, "--env=" + requestedEnvironment], mCb);
 			}
 		});
 	},

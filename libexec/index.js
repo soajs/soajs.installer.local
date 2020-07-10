@@ -1,9 +1,17 @@
 "use strict";
 
+/**
+ * @license
+ * Copyright SOAJS All Rights Reserved.
+ *
+ * Use of this source code is governed by an Apache license that can be
+ * found in the LICENSE file at the root of this repository
+ */
+
 process.env.SOAJS_REGISTRY_API = "127.0.0.1:5000";
 
 const path = require("path");
-const semver = require('semver')
+const semver = require('semver');
 
 //set the logger
 const logger = require("./utils/utils.js").getLogger();
@@ -15,8 +23,8 @@ process.env.SOAJS_INSTALLER_LOCATION = path.normalize(process.env.PWD + "/../");
 let binaryVer = "4.1.0";
 const packagejson = require(path.normalize(process.env.PWD + "/../package.json"));
 const local_packagejson = require(process.env.PWD + "/../soajs.installer.local/package.json");
-const remote_packagejson = require(process.env.PWD + "/../soajs.installer.remote/package.json");
-const versions_packagejson = require(process.env.PWD + "/../soajs.installer.versions/package.json");
+//const remote_packagejson = require(process.env.PWD + "/../soajs.installer.remote/package.json");
+//const versions_packagejson = require(process.env.PWD + "/../soajs.installer.versions/package.json");
 
 let installerBinVersion = packagejson.version;
 let installerLocalVersion = local_packagejson.version;
