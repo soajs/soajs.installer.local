@@ -498,8 +498,13 @@ const serviceModule = {
 				if (error) {
 					return callback(error);
 				}
-				remote_installer.migrate(options, strategy, (error, response) => {
-					return callback(error, response);
+				remote_installer.getSettings(options, (error, settings) => {
+					if (error) {
+						return callback(error);
+					}
+					remote_installer.migrate(options, strategy, settings.releaseInfo.name, (error, response) => {
+						return callback(error, response);
+					});
 				});
 			});
 		});
@@ -578,7 +583,7 @@ const serviceModule = {
 		});
 	},
 	
-	"patch" : (args, callback) => {
+	"patch": (args, callback) => {
 		if (args.length !== 2) {
 			return callback(null, "remote-installer update needs 2 arguments [serviceName] [configuration]");
 		}
@@ -598,7 +603,7 @@ const serviceModule = {
 					return callback(error);
 				}
 				remote_installer.patch(options, requestedService, (error, done) => {
-					if (done){
+					if (done) {
 						logger.info("Patch done");
 					}
 					return callback(error);
