@@ -758,24 +758,24 @@ const consoleModule = {
 		
 		let uiConfigFile = installerConfig.workingDirectory + "/node_modules/" + VERSION_INFO.services.ui.repo + "/app/uiConfig.js";
 		let uiConfigFile_original = installerConfig.workingDirectory + "/node_modules/" + VERSION_INFO.services.ui.repo + "/app/original_uiConfig.js";
-		fs.stat(uiConfigFile_original, (error, stats) => {
-			if (!stats) {
-				fs.copyFile(uiConfigFile, uiConfigFile_original, (error) => {
-					if (error) {
-						return callback(error);
-					}
-					updateConfig();
-				});
-			}
-			else {
-				updateConfig();
-			}
+		// fs.stat(uiConfigFile_original, (error, stats) => {
+		// 	if (!stats) {
+		// 		fs.copyFile(uiConfigFile, uiConfigFile_original, (error) => {
+		// 			if (error) {
+		// 				return callback(error);
+		// 			}
+		// 			updateConfig();
+		// 		});
+		// 	}
+		// 	else {
+		// 		updateConfig();
+		// 	}
 			
-			function updateConfig() {
-				let tntData = fs.readFileSync(uiConfigFile_original, "utf8");
-				tntData = tntData.replace(/localhost/g, args[0]);
-				fs.writeFileSync(uiConfigFile, tntData, "utf8");
-				
+			// function updateConfig() {
+			// 	let tntData = fs.readFileSync(uiConfigFile_original, "utf8");
+			// 	tntData = tntData.replace(/localhost/g, args[0]);
+			// 	fs.writeFileSync(uiConfigFile, tntData, "utf8");
+			
 				let configFile = installerConfig.workingDirectory + "/node_modules/" + VERSION_INFO.services.ui.repo + "/app/config.js";
 				let soajsProfile = require(configFile);
 				soajsProfile.host = args[0];
@@ -785,8 +785,8 @@ const consoleModule = {
 				
 				fs.writeFileSync(configFile, newProfileData);
 				return callback(null, `Console host has been updated to ${args[0]}.`);
-			}
-		});
+			// }
+		// });
 	}
 };
 
