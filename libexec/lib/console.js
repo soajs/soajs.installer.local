@@ -756,8 +756,8 @@ const consoleModule = {
 			return callback("Unable to get release information for the installed version [" + getInstalledVersion() + "]");
 		}
 		
-		let uiConfigFile = installerConfig.workingDirectory + "/node_modules/" + VERSION_INFO.services.ui.repo + "/app/uiConfig.js";
-		let uiConfigFile_original = installerConfig.workingDirectory + "/node_modules/" + VERSION_INFO.services.ui.repo + "/app/original_uiConfig.js";
+		// let uiConfigFile = installerConfig.workingDirectory + "/node_modules/" + VERSION_INFO.services.ui.repo + "/app/uiConfig.js";
+		// let uiConfigFile_original = installerConfig.workingDirectory + "/node_modules/" + VERSION_INFO.services.ui.repo + "/app/original_uiConfig.js";
 		// fs.stat(uiConfigFile_original, (error, stats) => {
 		// 	if (!stats) {
 		// 		fs.copyFile(uiConfigFile, uiConfigFile_original, (error) => {
