@@ -351,14 +351,14 @@ let doc = {
 						"1": {
 							"access": true,
 							"apisPermission": "restricted",
-							"post": {"apis": {"/item/recipe": {"access": true}}},
+							"post": {"apis": {"/recipe": {"access": true}}},
 							"put": {
 								"apis": {
 									"/item/resource": {"access": true},
 									"/item/deploy/build": {"access": true},
 									"/item/deploy/configure": {"access": true},
 									"/item/deploy/redeploy": {"access": true},
-									"/item/recipe": {"access": true},
+									"/recipe": {"access": true},
 									"/item/acl": {"access": true},
 									"/item/environments": {"access": true},
 									"/item/recipes": {"access": true},
@@ -394,7 +394,8 @@ let doc = {
 									"/kubernetes/clusters/:mode": {"access": true},
 									"/kubernetes/configurations/:mode": {"access": true},
 									"/kubernetes/services/:mode": {"access": true},
-									"/kubernetes/pod/log": {"access": true}
+									"/kubernetes/pod/log": {"access": true},
+									"/kubernetes/item/inspect": {"access": true}
 								}
 							},
 							"post": {
@@ -404,7 +405,8 @@ let doc = {
 									"/kubernetes/secret/registry": {"access": true},
 									"/kubernetes/configuration/:mode": {"access": true},
 									"/kubernetes/service/:mode": {"access": true},
-									"/account/kubernetes": {"access": true}
+									"/account/kubernetes": {"access": true},
+									"/cd/token": {"access": true}
 								}
 							},
 							"put": {
@@ -455,7 +457,7 @@ let doc = {
 									"/product": {"access": true},
 									"/product/package": {"access": true},
 									"/product/console/package": {"access": true},
-									"/tenant/application/key": {"access": true},
+									"/admin/tenant/application/key": {"access": true},
 									"/tenant": {"access": true},
 									"/admin/tenant/application": {"access": true},
 									"/admin/tenant/application/key/ext": {"access": true}
