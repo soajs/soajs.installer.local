@@ -46,10 +46,10 @@ let doc = {
 							},
 							"urac": {
 								"link": {
-									"addUser": "http://dashboard.soajs.org:80/#/setNewPassword",
-									"changeEmail": "http://dashboard.soajs.org:80/#/changeEmail/validate",
-									"forgotPassword": "http://dashboard.soajs.org:80/#/resetPassword",
-									"join": "http://dashboard.soajs.org:80/#/join/validate"
+									"addUser": "http://dashboard.soajs.org:80/reset-password",
+									"changeEmail": "http://dashboard.soajs.org:80/validate-change-email",
+									"forgotPassword": "http://dashboard.soajs.org:80/reset-password",
+									"join": "http://dashboard.soajs.org:80/validate-signup"
 								},
 								"tokenExpiryTTL": 2 * 24 * 3600 * 1000,
 								"validateJoin": true,
