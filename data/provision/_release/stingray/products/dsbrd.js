@@ -450,7 +450,10 @@ let doc = {
 									"/admin/tenant/application/key/ext": {"access": true},
 									"/admin/tenant/oauth": {"access": true},
 									"/admin/tenant": {"access": true},
-									"/admin/tenant/application": {"access": true}
+									"/admin/tenant/application": {"access": true},
+									"/tenant/console/application/key/config": {"access": true},
+									"/tenant/console/application": {"access": true},
+									"/tenant/console/application/key/ext": {"access": true}
 								}
 							},
 							"post": {
@@ -461,7 +464,10 @@ let doc = {
 									"/admin/tenant/application/key": {"access": true},
 									"/tenant": {"access": true},
 									"/admin/tenant/application": {"access": true},
-									"/admin/tenant/application/key/ext": {"access": true}
+									"/admin/tenant/application/key/ext": {"access": true},
+									"/tenant/console/application": {"access": true},
+									"/tenant/console/application/key": {"access": true},
+									"/tenant/console/application/key/ext": {"access": true}
 								}
 							},
 							"delete": {
@@ -472,7 +478,10 @@ let doc = {
 									"/tenant": {"access": true},
 									"/tenant/application": {"access": true},
 									"/tenant/application/key": {"access": true},
-									"/tenant/application/key/ext": {"access": true}
+									"/tenant/application/key/ext": {"access": true},
+									"/tenant/console/application": {"access": true},
+									"/tenant/console/application/key": {"access": true},
+									"/tenant/console/application/key/ext": {"access": true}
 								}
 							},
 							"get": {
@@ -481,7 +490,9 @@ let doc = {
 									"/products": {"access": true},
 									"/product": {"access": true},
 									"/tenants": {"access": true},
-									"/tenant/tenants": {"access": true}
+									"/tenant/tenants": {"access": true},
+									"/tenants/console": {"access": true},
+									"/products/console": {"access": true}
 								}
 							}
 						}
@@ -515,7 +526,7 @@ let doc = {
 				}
 			},
 			"_TTL": 604800000,
-			"aclTypeBy`Env": {"dashboard": "granular"}
+			"aclTypeByEnv": {"dashboard": "granular"}
 		}
 	]
 };
