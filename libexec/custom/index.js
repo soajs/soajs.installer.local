@@ -40,7 +40,11 @@ let lib = {
 					}
 					
 					if (e[objId]) {
-						e[objId] = mongoConnection.ObjectId(e[objId]);
+						if (typeof e[objId] === "object" && e[objId].$oid) {
+							e[objId] = mongoConnection.ObjectId(e[objId].$oid);
+						} else {
+							e[objId] = mongoConnection.ObjectId(e[objId]);
+						}
 					}
 					let condition = {[condAnchor]: e[condAnchor]};
 					
@@ -79,8 +83,7 @@ let lib = {
 				() => {
 					return cb();
 				});
-		}
-		else {
+		} else {
 			return cb();
 		}
 	},
@@ -106,10 +109,18 @@ let lib = {
 					let condition = {token: e.token};
 					
 					if (e._id) {
-						e._id = mongoConnection.ObjectId(e._id);
+						if (typeof e._id === "object" && e._id.$oid) {
+							e._id = mongoConnection.ObjectId(e._id.$oid);
+						} else {
+							e._id = mongoConnection.ObjectId(e._id);
+						}
 					}
 					if (e && e.user && e.user._id) {
-						e.user._id = mongoConnection.ObjectId(e.user._id);
+						if (typeof e.user._id === "object" && e.user._id.$oid) {
+							e.user._id = mongoConnection.ObjectId(e.user._id.$oid);
+						} else {
+							e.user._id = mongoConnection.ObjectId(e.user._id);
+						}
 					}
 					let update = () => {
 						if (mongoConnection.updateOne) {
@@ -146,8 +157,7 @@ let lib = {
 				() => {
 					return cb();
 				});
-		}
-		else {
+		} else {
 			return cb();
 		}
 	},
@@ -174,7 +184,11 @@ let lib = {
 					let mongoConnection = new Mongo(profile);
 					let condition = {username: e.username};
 					if (e._id) {
-						e._id = mongoConnection.ObjectId(e._id);
+						if (typeof e._id === "object" && e._id.$oid) {
+							e._id = mongoConnection.ObjectId(e._id.$oid);
+						} else {
+							e._id = mongoConnection.ObjectId(e._id);
+						}
 					}
 					let update = () => {
 						if (mongoConnection.updateOne) {
@@ -211,8 +225,7 @@ let lib = {
 				() => {
 					return cb();
 				});
-		}
-		else {
+		} else {
 			return cb();
 		}
 	},
@@ -239,7 +252,11 @@ let lib = {
 					let mongoConnection = new Mongo(profile);
 					let condition = {code: e.code};
 					if (e._id) {
-						e._id = mongoConnection.ObjectId(e._id);
+						if (typeof e._id === "object" && e._id.$oid) {
+							e._id = mongoConnection.ObjectId(e._id.$oid);
+						} else {
+							e._id = mongoConnection.ObjectId(e._id);
+						}
 					}
 					let update = () => {
 						if (mongoConnection.updateOne) {
@@ -276,8 +293,7 @@ let lib = {
 				() => {
 					return cb();
 				});
-		}
-		else {
+		} else {
 			return cb();
 		}
 	},
@@ -713,7 +729,11 @@ let custom = {
 								if (doc && doc.applications && Array.isArray(doc.applications) && doc.applications.length > 0) {
 									for (let appIndex = 0; appIndex < doc.applications.length; appIndex++) {
 										if (doc.applications[appIndex].appId) {
-											doc.applications[appIndex].appId = mongoConnection.ObjectId(doc.applications[appIndex].appId);
+											if (typeof doc.applications[appIndex].appId === "object" && doc.applications[appIndex].appId.$oid) {
+												doc.applications[appIndex].appId = mongoConnection.ObjectId(doc.applications[appIndex].appId.$oid);
+											} else {
+												doc.applications[appIndex].appId = mongoConnection.ObjectId(doc.applications[appIndex].appId);
+											}
 										}
 									}
 								}
