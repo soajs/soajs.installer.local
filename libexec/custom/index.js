@@ -750,11 +750,25 @@ let custom = {
 				
 				function (cb) {
 					//check for tenants data
-					if (fs.existsSync(dataPath + "oauth/")) {
+					if (fs.existsSync(dataPath + "oauth/token/")) {
 						let config = {
 							"delete": cleanDataBefore
 						};
-						return lib.oauth(config, dataPath + "oauth/", mongoConnection, cb);
+						return lib.oauth(config, dataPath + "oauth/token/", mongoConnection, cb);
+					} else {
+						return cb(null);
+					}
+				},
+				function (cb) {
+					//check for tenants data
+					if (fs.existsSync(dataPath + "oauth/urac/")) {
+						let config = {
+							"colName": "oauth_urac",
+							"condAnchor": "userId",
+							"objId": "_id",
+							"delete": cleanDataBefore
+						};
+						return lib.basic(config, dataPath + "oauth/urac/", mongoConnection, cb);
 					} else {
 						return cb(null);
 					}
