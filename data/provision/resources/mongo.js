@@ -8,5 +8,9 @@ module.exports = {
 	"author": "owner",
 	"plugged": true,
 	"shared": false,
+	"locked": true,
+	"sharedEnvs": {
+		"DEMO": true
+	},
 	"config": "%clusters%"
 };
